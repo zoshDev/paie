@@ -1,0 +1,154 @@
+(GenericAssignmentForm)
+Objectif Général : Créer un composant React générique et réutilisable nommé GenericAssignmentForm.tsx. Ce composant permettra d'assigner un ensemble d'entités "source" (par exemple, des rubriques) à un ensemble d'entités "cible" (par exemple, des profils de paie, des employés, des catégories). Il remplacera à terme des implémentations spécifiques comme AssignRubricsToProfilesForm.tsx pour promouvoir la réutilisabilité.
+
+Principes Fondamentaux à Respecter Impérativement :
+
+Généricité : Le composant doit être conçu pour fonctionner avec n'importe quel type d'entités "source" et "cible", en utilisant des props pour la configuration.
+
+Réutilisabilité : Le code doit être modulaire et facile à intégrer dans différentes parties de l'application.
+
+Cohérence UI/UX : L'interface utilisateur doit être intuitive, claire et offrir une expérience similaire à celle de AssignRubricsToProfilesForm.tsx.
+
+Clarté du Code : Utiliser des commentaires exhaustifs pour expliquer la logique, les props et les choix de conception.
+
+Performance : Optimiser les re-rendus en utilisant useMemo et useCallback si nécessaire.
+
+Utiliser Tailwind CSS pour le stylisme.
+
+Utiliser react-hot-toast pour toutes les notifications utilisateur.
+
+Contexte des Fichiers Existants (Référence pour l'IA) :
+
+EntityModal.tsx : La modale générique qui affichera ce nouveau composant.
+
+AssignRubricsToProfilesForm.tsx : Servira de modèle fonctionnel et visuel pour la logique de sélection et d'affichage des cibles, mais le nouveau composant doit être générique.
+
+RubricListPage.tsx : La page où l'intégration initiale aura lieu (assignation de rubriques à des profils de paie).
+
+ProfilPaie.ts (ou interface équivalente) : Pour la structure des profils de paie (exemple de cible).
+
+Rubric.ts (ou interface équivalente) : Pour la structure des rubriques (exemple de source).
+
+Détail des Exigences et des Tâches (Instructions Spécifiques pour l'IA) :
+
+1. Création du Composant GenericAssignmentForm.tsx
+Fichier Cible : components/form/GenericAssignmentForm.tsx (ou un chemin approprié dans l'arborescence des components).
+
+Props du Composant :
+
+sourceItemsIds: string[] : Un tableau des IDs des entités "source" que l'on souhaite assigner (par exemple, les IDs des rubriques sélectionnées).
+
+availableTargetEntities: T[] : Un tableau de toutes les entités "cible" disponibles pour la sélection. T doit être un type générique avec au moins un id: string.
+
+onClose: () => void : Fonction à appeler pour fermer la modale.
+
+onSubmit: (sourceIds: string[], targetIds: string[]) => void : Fonction de callback appelée lors de la soumission. Elle recevra les IDs des sources et les IDs des cibles sélectionnées.
+
+isSubmitting?: boolean : Indique si la soumission est en cours (pour désactiver les boutons).
+
+title?: string : Titre personnalisé pour le formulaire d'assignation (par défaut : "Assignation d'entités").
+
+description?: string : Description personnalisée sous le titre.
+
+sourceItemsLabel?: string : Texte pour décrire les éléments source (ex: "Rubrique(s) à assigner").
+
+targetFilterPlaceholder?: string : Texte pour le placeholder du champ de recherche des cibles (ex: "Filtrer les profils de paie...").
+
+targetLabelKey?: keyof T : La clé de la propriété à utiliser pour l'affichage du nom de l'entité cible dans l'UI (ex: 'nom' ou 'code'). Par défaut, utiliser 'nom' si disponible, sinon 'id'.
+
+targetValueKey?: keyof T : La clé de la propriété à utiliser comme valeur unique de l'entité cible (généralement 'id'). Par défaut 'id'.
+
+Logique Interne et UI/UX :
+
+État Local : Gérer l'état de la recherche (searchTerm) et des entités cibles sélectionnées (selectedTargetEntities: T[]).
+
+Affichage des Sources : Afficher clairement les sourceItemsIds qui seront assignés, potentiellement sous forme de liste ou de tags, avec le sourceItemsLabel.
+
+Section "Cibles sélectionnées" :
+
+Afficher les selectedTargetEntities sous forme de tags ou de liste.
+
+Chaque entité sélectionnée doit avoir un bouton X pour la retirer individuellement de la sélection.
+
+Un bouton "Réinitialiser" doit permettre de vider toutes les selectedTargetEntities.
+
+Afficher le nombre de cibles sélectionnées.
+
+Section "Sélectionner des cibles disponibles" :
+
+Un champ de texte (input type="text") pour filtrer les availableTargetEntities en fonction du searchTerm. La recherche doit être insensible à la casse et s'appliquer aux valeurs de targetLabelKey et targetValueKey.
+
+Une liste déroulante (max-height avec overflow-y-auto) des filteredAvailableTargetEntities.
+
+Chaque entité disponible doit avoir un bouton "Ajouter" pour l'ajouter aux selectedTargetEntities.
+
+Gérer le cas où aucune entité disponible n'est trouvée après filtrage.
+
+Boutons d'Action :
+
+"Annuler" : Appelle onClose.
+
+"Assigner les entités" : Appelle onSubmit(sourceItemsIds, selectedTargetEntities.map(t => t[targetValueKey])). Doit être désactivé si isSubmitting est true ou si aucune cible n'est sélectionnée.
+
+Notifications : Utiliser toast.success, toast.info, toast.error pour les retours utilisateur (ex: "Profil ajouté", "Profil retiré", "Veuillez sélectionner au moins une cible").
+
+2. Mise à Jour de EntityModal.tsx
+Fichier Cible : components/ui/Modal/EntityModal.tsx
+
+Tâches :
+
+Mettre à jour le type ModalMode : Ajouter un mode générique, par exemple "assign-entities", à l'union de types ModalMode.
+
+Ajouter la prop renderAssignmentForm :
+
+Définir la prop dans l'interface EntityModalsProps :
+
+renderAssignmentForm?: (sourceIds: string[], onClose: () => void, onSubmit: (sourceIds: string[], targetIds: string[]) => void) => React.ReactNode;
+
+Cette prop remplacera l'ancienne renderAssignToProfiles pour être plus générique.
+
+Gérer le nouveau mode dans le switch :
+
+Ajouter un nouveau case pour "assign-entities".
+
+Dans ce case :
+
+Définir le title de la modale en utilisant la prop title passée au GenericAssignmentForm (ou un titre par défaut).
+
+Définir le content pour rendre renderAssignmentForm, en lui passant selectedIds (qui sont les IDs des sources), onClose, et une fonction onSubmit qui appellera le callback de soumission de EntityModal.
+
+S'assurer que showFooter est false car le composant GenericAssignmentForm gère ses propres boutons.
+
+3. Mise à Jour de RubricListPage.tsx
+Fichier Cible : RubricListPage.tsx
+
+Tâches :
+
+Remplacer l'utilisation de openModal(null, "assign-to-profiles") :
+
+Dans la BulkActionsBar, modifier l'onClick du bouton "Assigner à profil(s)" pour appeler openModal(null, "assign-entities").
+
+Remplacer l'appel à renderAssignToProfiles :
+
+Dans le composant EntityModals, remplacer la prop renderAssignToProfiles par renderAssignmentForm.
+
+La valeur de renderAssignmentForm doit instancier GenericAssignmentForm, en lui passant les props nécessaires :
+
+renderAssignmentForm={(sourceIds, close, submit) => (
+  <GenericAssignmentForm
+    sourceItemsIds={sourceIds} // Les IDs des rubriques sélectionnées
+    availableTargetEntities={/* Vos mockProfilsPaie ou données réelles */}
+    onClose={close}
+    onSubmit={(sIds, tIds) => handleAssignRubricsToProfiles(sIds, tIds)} // Adapter l'appel
+    title="Assigner des rubriques aux profils de paie"
+    description="Sélectionnez les profils de paie auxquels les rubriques choisies seront assignées."
+    sourceItemsLabel="Rubrique(s) à assigner"
+    targetFilterPlaceholder="Filtrer les profils de paie..."
+    targetLabelKey="nom" // Propriété 'nom' pour l'affichage du profil
+    targetValueKey="id"   // Propriété 'id' pour la valeur du profil
+  />
+)}
+
+Mettre à jour handleAssignRubricsToProfiles : S'assurer que cette fonction est toujours présente et gère la logique de soumission spécifique à l'assignation de rubriques aux profils.
+
+Ce prompt est complet et devrait permettre à l'IA de créer un composant d'assignation générique robuste et de l'intégrer dans votre application.

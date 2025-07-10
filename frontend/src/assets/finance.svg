@@ -1,0 +1,5 @@
+<!-- /assets/illustrations/finance.svg -->
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="512" cy="512" r="512" fill="#DCFCE7"/>
+  <path d="M320 560h384v96H320v-96zM368 416h288v96H368v-96zM416 272h192v96H416v-96z" fill="#4ADE80"/>
+</svg>

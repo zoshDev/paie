@@ -1,0 +1,5 @@
+<!-- /assets/illustrations/team_spirit.svg -->
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="512" cy="512" r="512" fill="#E0F2FE"/>
+  <path d="M256 600h512v64H256v-64zM320 400a64 64 0 11128 0 64 64 0 01-128 0zm256 0a64 64 0 11128 0 64 64 0 01-128 0zM336 504h96c35 0 64 29 64 64v16H272v-16c0-35 29-64 64-64zm320 0h96c35 0 64 29 64 64v16H592v-16c0-35 29-64 64-64z" fill="#38BDF8"/>
+</svg>

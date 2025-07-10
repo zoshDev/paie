@@ -1,0 +1,15 @@
+# RubricMethodCalculator - Composant de Configuration des Méthodes de Calcul
+
+## Vue d'ensemble
+
+Le composant `RubricMethodCalculator` est un composant React avancé conçu pour gérer la configuration complexe des méthodes de calcul des rubriques de paie. Il s'intègre parfaitement avec le système de formulaires génériques basé sur `react-hook-form` et `yup`.
+
+## Fonctionnalités principales
+
+### 🧮 Quatre méthodes de calcul supportées
+- **Montant fixe** : Valeur constante en FCFA
+- **Pourcentage** : Calcul basé sur un taux avec sélection de base flexible
+- **Barème progressif** : Système de tranches avec taux différenciés
+- **Formule personnalisée** : Expressions mathématiques personnalisables
+
+### 🎯 Sélecteur de base sc

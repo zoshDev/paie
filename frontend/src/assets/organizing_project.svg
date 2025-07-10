@@ -1,0 +1,7 @@
+<!-- /assets/illustrations/organizing_projects.svg -->
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="512" fill="#F3F4F6"/>
+  <rect x="200" y="300" width="624" height="96" rx="16" fill="#60A5FA"/>
+  <rect x="200" y="440" width="400" height="96" rx="16" fill="#93C5FD"/>
+  <rect x="200" y="580" width="500" height="96" rx="16" fill="#BFDBFE"/>
+</svg>

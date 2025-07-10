@@ -1,0 +1,9 @@
+<!-- /assets/illustrations/resume.svg -->
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="512" cy="512" r="512" fill="#FEF9C3"/>
+  <rect x="312" y="240" width="400" height="544" rx="24" fill="#FACC15"/>
+  <circle cx="512" cy="340" r="48" fill="white"/>
+  <rect x="392" y="420" width="240" height="20" rx="4" fill="white"/>
+  <rect x="392" y="460" width="240" height="20" rx="4" fill="white"/>
+  <rect x="392" y="500" width="160" height="20" rx="4" fill="white"/>
+</svg>

@@ -1,0 +1,9 @@
+<!-- /assets/illustrations/invoice.svg -->
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="512" cy="512" r="512" fill="#EDE9FE"/>
+  <rect x="300" y="280" width="424" height="464" rx="24" fill="#8B5CF6"/>
+  <rect x="340" y="320" width="344" height="32" rx="4" fill="white"/>
+  <rect x="340" y="380" width="240" height="24" rx="4" fill="white"/>
+  <rect x="340" y="420" width="240" height="24" rx="4" fill="white"/>
+  <rect x="340" y="460" width="160" height="24" rx="4" fill="white"/>
+</svg>
