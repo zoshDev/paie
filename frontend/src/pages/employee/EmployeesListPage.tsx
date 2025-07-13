@@ -26,6 +26,8 @@ import {
 
 import type { Employee } from './types';
 import type { FormField } from '../../components/form/types';
+import useCategorieEchelons from '../categorieEchelon/useCategorieEchelons';
+import useCompanies from '../company/useCompanies';
 
 const EmployeesListPage: React.FC = () => {
   const {
@@ -93,6 +95,12 @@ const EmployeesListPage: React.FC = () => {
       className: 'flex items-center gap-1 px-2 py-1 text-rose-600 hover:text-white hover:bg-rose-600 rounded transition'
     }
   ];
+
+  //Appels aux API externes
+  const { categorieEchelons } = useCategorieEchelons();
+  const { companies } = useCompanies();
+
+  
 
   return (
     <div className="container mx-auto p-6">

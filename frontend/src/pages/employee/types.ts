@@ -8,7 +8,5 @@ export interface Employee {
   categorie?: string; //category ID
   department?: string; //department ID
   poste?: string; //job title
-  date_debut?: string; //start date
-  date_fin?: string; //end date
   [key: string]: any; // Allow additional properties
 }

@@ -3,7 +3,8 @@ import { useAuthStore } from "../../stores/authStore";
 
 
 export default function PrivateRoute() {
-  const {token} = useAuthStore();
+  //const {token} = useAuthStore();
 
-  return token ? <Outlet /> : <Navigate to="/login" />;
+  //return token ? <Outlet /> : <Navigate to="/login" />;
+  return <Outlet />;
 }

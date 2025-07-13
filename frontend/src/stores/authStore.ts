@@ -13,7 +13,7 @@ interface User {
   id: number;
   email: string;
   role: Role[];
-  name: string;
+  name?: string;
   phoneNumber: string;
   pseudo: string;
 }
@@ -54,19 +54,19 @@ export const useAuthStore = create<AuthState>()(
         if (!token) return true;
         try {
           const decodedToken = jwtDecode<JWTPayload>(token);
-          return decodedToken.exp && decodedToken.exp < Date.now() / 1000;
+          return !!decodedToken.exp && decodedToken.exp < Math.floor(Date.now() / 1000);
         } catch (error) {
           console.error('Erreur lors du décodage du token:', error);
           return true;
         }
       },
 
-      login: (token, user) => {
+      login: (token) => {
         try{
           const payload = jwtDecode<JWTPayload>(token);
           console.log('payload', payload);
           const user = {
-            id: payload.sub,
+            id: Number(payload.sub),
             email: payload.email,
             role: payload.role,
             nom: payload.name,
