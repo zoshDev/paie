@@ -1,69 +1,60 @@
-import React, { useState, useEffect } from "react";
-import type { ProfilPaie, ProfilPaieRubrique } from "../../pages/profilPaie/types";
-import { profilPaieFields } from "../../pages/profilPaie/profilPaieField";
-import RubriqueSelector from "./RubriqueSelector";
-import GenericForm from "./GenericForm";
+import React from "react";
+import GenericFormStable from "@/pages/profilPaie/GenericFormStable";
+import type { FormField } from "./GenericForm";
+
+interface RoleProfilPaieFormData {
+  roleName: string;
+  categorie: string;
+  description?: string;
+}
 
 interface ProfilPaieFormProps {
-  initialData?: Partial<ProfilPaie>;
-  onSubmit: (data: Partial<ProfilPaie>) => void;
+  initialData: Partial<RoleProfilPaieFormData>;
+  onSubmit: (data: RoleProfilPaieFormData) => void;
   isSubmitting?: boolean;
 }
 
 const ProfilPaieForm: React.FC<ProfilPaieFormProps> = ({
-  initialData = {},
+  initialData,
   onSubmit,
   isSubmitting = false,
 }) => {
-  // État local pour les rubriques
-  const [selectedRubriques, setSelectedRubriques] = useState<ProfilPaieRubrique[]>(
-    initialData.rubriques || []
-  );
+  const fields: FormField[] = [
+    {
+      name: "roleName",
+      label: "Nom du Profil",
+      placeholder: "Ex: Gestionnaire RH",
+      type: "text",
+    },
+    {
+      name: "categorie",
+      label: "Catégorie",
+      type: "select",
+      placeholder: "Ex: Cadre, Non Cadre",
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "textarea",
+      placeholder: "Ex: Profil appliqué aux employés cadres",
+    },
+  ];
 
-  // Valeurs initiales pour le formulaire
-  const formInitialValues = {
-    code: initialData.code || "",
-    nom: initialData.nom || "",
+  const initialValues = {
+    roleName: initialData.roleName || "",
     categorie: initialData.categorie || "",
     description: initialData.description || "",
   };
-  
-  // Mettre à jour les rubriques lorsque les données initiales changent
-  useEffect(() => {
-    setSelectedRubriques(initialData.rubriques || []);
-  }, [initialData]);
-
-  // Gérer la soumission du formulaire avec les rubriques
-  const handleFormSubmit = (formData: Record<string, any>) => {
-    onSubmit({
-      ...formData,
-      rubriques: selectedRubriques,
-    });
-  };
 
   return (
-    <div className="space-y-6">
-      {/* Formulaire principal avec GenericForm */}
-      <GenericForm
-        fields={profilPaieFields}
-        initialValues={formInitialValues}
-        onSubmit={handleFormSubmit}
-        isSubmitting={isSubmitting}
-        submitLabel="Enregistrer"
-      />
-      
-      {/* Section des rubriques */}
-      <div>
-        <h3 className="text-md font-semibold border-b pb-1 mb-3 text-gray-700">
-          Rubriques associées
-        </h3>
-        <RubriqueSelector 
-          selectedRubriques={selectedRubriques}
-          onChange={setSelectedRubriques}
-        />
-      </div>
-    </div>
+    <GenericFormStable
+      fields={fields}
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel="Enregistrer"
+    />
   );
 };
 
-export default ProfilPaieForm; 
+export default ProfilPaieForm;

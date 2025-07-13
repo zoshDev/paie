@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { useProfilPaie } from '../useProfilPaie';
+import { useProfilPaie } from '../useRoleProfil';
 
 // Mock de React Query
 const queryClient = new QueryClient({

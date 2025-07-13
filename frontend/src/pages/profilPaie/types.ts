@@ -1,24 +1,17 @@
-export interface ProfilPaieRubrique {
-  rubriqueId: string;
-  code: string;
-  nom: string;
-  type: string;
-  ordre: number;
-}
-
-export interface ProfilPaie {
+export interface ElementSalaire {
   id: string;
-  code: string;
-  nom: string;
-  description?: string;
-  categorie: string;
-  rubriques: ProfilPaieRubrique[];
+  libelle: string;            // ↔ ElementSalaire.libelle
+  code: string;               // ↔ ElementSalaire.code
+  type_element: string;       // ↔ ElementSalaire.type_element
+  nature: string;             // ↔ ElementSalaire.nature
+  imposable?: boolean;
+  ordre?: number;             // facultatif (interne à l'association ?)
 }
 
-export interface ProfilPaieFormData {
-  code: string;
-  nom: string;
+export interface RoleProfilPaie {
+  id: string;                 // ↔ Role.id
+  roleName: string;           // ↔ Role.roleName
   description?: string;
-  categorie: string;
-  rubriques: ProfilPaieRubrique[];
-} 
+  categorie?: string;         // champ métier custom
+  elements: ElementSalaire[]; // ↔ RoleElementSalaire[]
+}

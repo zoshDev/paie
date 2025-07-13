@@ -1,47 +1,54 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PlusIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/outline";
-import type { Rubric } from "../../pages/rubric/types";
-import type { ProfilPaieRubrique } from "../../pages/profilPaie/types";
+import type { ElementSalaire } from "../../pages/profilPaie/types";
 
 // Fonction simulée pour récupérer les rubriques
-async function fetchRubrics(): Promise<Rubric[]> {
+async function fetchRubrics(): Promise<ElementSalaire[]> {
   // À remplacer par l'appel API réel
   return [
      {
       id: 'RB001',
       code: 'SB',
-      nom: 'Salaire de Base',
-      type: 'salaire',
-      description: 'Rémunération mensuelle fixe de l\'employé.',
+      libelle: 'Salaire de Base',
+      type_element: 'salaire',
+      nature: 'fixe',
+      imposable: true,
+      ordre: 1,
     },
     {
       id: 'RB002',
       code: 'PRIME_ANCIENNETE',
-      nom: 'Prime d\'Ancienneté',
-      type: 'gain',
-      description: 'Prime versée en fonction de la durée d\'emploi dans l\'entreprise.',
+      libelle: 'Prime d\'Ancienneté',
+      type_element: 'gain',
+      nature: 'fixe',
+      imposable: true,
+      ordre: 2,
     },
     {
       id: 'RB003',
       code: 'INDEMNITE_TRANSPORT',
-      nom: 'Indemnité de Transport',
-      type: 'gain',
-      description: 'Remboursement des frais de déplacement domicile-travail.',
+      libelle: 'Indemnité de Transport',
+      type_element: 'gain',
+      nature: 'fixe',
+      imposable: true,
+      ordre: 3,
     },
     {
       id: 'RB004',
       code: 'COTIS_SANTÉ',
-      nom: 'Cotisation Santé',
-      type: 'deduction',
-      description: 'Part salariale de la cotisation à la mutuelle santé.',
+      libelle: 'Cotisation Santé',
+      type_element: 'deduction',
+      nature: 'fixe',
+      imposable: true,
+      ordre: 4,
     }
   ];
 }
 
 interface RubriqueSelectorProps {
-  selectedRubriques: ProfilPaieRubrique[];
-  onChange: (rubriques: ProfilPaieRubrique[]) => void;
+  selectedRubriques: ElementSalaire[];
+  onChange: (rubriques: ElementSalaire[]) => void;
 }
 
 const RubriqueSelector: React.FC<RubriqueSelectorProps> = ({ 
@@ -51,28 +58,30 @@ const RubriqueSelector: React.FC<RubriqueSelectorProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   
   // Récupération des rubriques disponibles
-  const { data: availableRubrics = [] } = useQuery<Rubric[]>({
+  const { data: availableRubrics = [] } = useQuery<ElementSalaire[]>({
     queryKey: ["rubrics"],
     queryFn: fetchRubrics,
   });
   
   // Rubriques filtrées selon la recherche
   const filteredRubrics = availableRubrics.filter(
-    rub => !selectedRubriques.some(sr => sr.rubriqueId === rub.id) && 
+    rub => !selectedRubriques.some(sr => sr.id === rub.id) && 
     (
-      rub.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      rub.libelle.toLowerCase().includes(searchTerm.toLowerCase()) || 
       rub.code.toLowerCase().includes(searchTerm.toLowerCase())||
-      rub.type.toLowerCase().includes(searchTerm.toLowerCase())
+      rub.type_element.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
   // Ajouter une rubrique au profil
-  const handleAddRubrique = (rubric: Rubric) => {
-    const newRubrique: ProfilPaieRubrique = {
-      rubriqueId: rubric.id,
+  const handleAddRubrique = (rubric: ElementSalaire) => {
+    const newRubrique: ElementSalaire = {
+      id: rubric.id,
+      libelle: rubric.libelle,
       code: rubric.code,
-      nom: rubric.nom,
-      type: rubric.type,
+      type_element: rubric.type_element,
+      nature: rubric.nature,
+      imposable: rubric.imposable,
       ordre: selectedRubriques.length + 1
     };
     
@@ -127,13 +136,13 @@ const RubriqueSelector: React.FC<RubriqueSelectorProps> = ({
         ) : (
           <div className="border rounded overflow-hidden">
             {selectedRubriques.map((rub, index) => (
-              <div key={rub.rubriqueId} className="flex items-center justify-between border-b last:border-b-0 p-2 hover:bg-gray-50">
+              <div key={rub.id} className="flex items-center justify-between border-b last:border-b-0 p-2 hover:bg-gray-50">
                 <div className="flex items-center space-x-2">
                   <span className="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded">
                     {rub.ordre}
                   </span>
                   <span className="font-medium text-sm">{rub.code}</span>
-                  <span className="text-sm text-gray-600">{rub.nom}</span>
+                  <span className="text-sm text-gray-600">{rub.libelle}</span>
                 </div>
                 
                 <div className="flex space-x-1">
@@ -184,17 +193,17 @@ const RubriqueSelector: React.FC<RubriqueSelectorProps> = ({
               {searchTerm ? "Aucune rubrique trouvée" : "Toutes les rubriques ont été ajoutées"}
             </p>
           ) : (
-            filteredRubrics.map(rubric => (
+            filteredRubrics.map((rubric: ElementSalaire) => (
               <div key={rubric.id} className="flex items-center justify-between p-2 border-b last:border-b-0 hover:bg-gray-50">
                 <div>
                   <span className="font-medium text-sm">{rubric.code}</span>
-                  <span className="text-sm text-gray-600 ml-2">{rubric.nom}</span>
+                  <span className="text-sm text-gray-600 ml-2">{rubric.libelle}</span>
                   <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                    rubric.type === 'salaire' ? 'bg-blue-100 text-blue-800' : 
-                    rubric.type === 'gain' ? 'bg-green-100 text-green-800' : 
+                    rubric.type_element === 'salaire' ? 'bg-blue-100 text-blue-800' : 
+                    rubric.type_element === 'gain' ? 'bg-green-100 text-green-800' : 
                     'bg-red-100 text-red-800'
                   }`}>
-                    {rubric.type}
+                    {rubric.type_element}
                   </span>
                 </div>
                 

@@ -1,18 +1,17 @@
 import type { Column } from "../../components/table/DataTable";
-import type { ProfilPaie } from "./types";
+import type { RoleProfilPaie } from "./types";
 
-export const profilPaieColumns: Column<ProfilPaie>[] = [
+export const profilPaieColumns: Column<RoleProfilPaie>[] = [
   { 
       header: '', 
-      key: 'select' as keyof ProfilPaie,
+      key: 'select' as keyof RoleProfilPaie,
       isSelection: true, 
   },
-  { header: "Code", key: "code" },
-  { header: "Nom", key: "nom" },
-  { header: "Catégorie", key: "categorie" },
+  { header: "Nom", key: "roleName" },
+  { header: "Catégorie-Echelon", key: "categorie" },
   { 
-    header: "Nombre de rubriques", 
-    key: "rubriques" as keyof ProfilPaie,
-    render: (profil: ProfilPaie) => profil.rubriques ? profil.rubriques.length.toString() : "0"
+    header: "Nombre d'éléments de salaire", 
+    key: "elements" as keyof RoleProfilPaie,
+    render: (profil: RoleProfilPaie) => profil.elements ? profil.elements.length.toString() : "0"
   }
 ]; 
