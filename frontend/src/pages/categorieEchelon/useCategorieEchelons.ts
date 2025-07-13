@@ -8,8 +8,8 @@ export default function useCategorieEchelons() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const { data = [], isLoading, isError, refetch } = useQuery<CategorieEchelon[]>({
-    queryKey: ['categorieEchelons'],
-    queryFn: categorieEchelonService.list,
+    queryKey: ['categorie-echelons'],
+    queryFn: categorieEchelonService.list
   });
 
   const filtered = data.filter((item) => {
@@ -31,7 +31,7 @@ export default function useCategorieEchelons() {
   const isAllSelected = selectedIds.length === filtered.length;
 
   return {
-    categorieEchelons: filtered,
+    associations: filtered,
     searchTerm,
     setSearchTerm,
     selectedIds,

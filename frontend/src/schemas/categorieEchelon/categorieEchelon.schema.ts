@@ -13,16 +13,16 @@ export const categorieEchelonFormSections: FormSection[] = [
       {
         name: 'categorieId',
         label: 'Catégorie',
-        type: 'text',
+        type: 'select', // ✅ Affiche une liste déroulante
         required: true,
-        options: [], // injectées dynamiquement au moment du rendu
+        options: [],    // ✅ Injectées dynamiquement dans le composant (useCategories)
       },
       {
         name: 'echelonId',
         label: 'Échelon',
-        type: 'text',
+        type: 'select', // ✅ Liste déroulante aussi
         required: true,
-        options: [],
+        options: [],    // ✅ Injectées dynamiquement via useEchelons
       }
     ]
   }
