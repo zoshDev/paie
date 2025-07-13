@@ -12,21 +12,8 @@ async function fetchEmployees(): Promise<Employee[]> {
   { id: '2', Nom: 'Lefevre Marie', Categorie: 'Commercial', Poste: 'Ventes' },
   { id: '3', Nom: 'Garcia Pierre', Categorie: 'Gestion', Poste: 'RH' },
   { id: '4', Nom: 'Dubois Sophie', Categorie: 'Technique', Poste: 'Développement' },
-  { id: '5', Nom: 'Moreau Alain', Categorie: 'Commercial', Poste: 'Marketing' },
-  { id: '6', Nom: 'Lambert Isabelle', Categorie: 'Gestion', Poste: 'Comptabilité' },
-  { id: '7', Nom: 'Roux Michel', Categorie: 'Technique', Poste: 'Support' },
-  { id: '8', Nom: 'Bernard Claire', Categorie: 'Commercial', Poste: 'Service Client' },
-  { id: '9', Nom: 'Petit Antoine', Categorie: 'Gestion', Poste: 'Direction' },
-  { id: '10', Nom: 'Robert Julie', Categorie: 'Technique', Poste: 'Sécurité' },
-  { id: '11', Nom: 'Richard Paul', Categorie: 'Commercial', Poste: 'Affaires' },
-  { id: '12', Nom: 'Durand Sandrine', Categorie: 'Gestion', Poste: 'Juridique' },
-  { id: '13', Nom: 'Thomas Eric', Categorie: 'Technique', Poste: 'Réseaux' },
-  { id: '14', Nom: 'Laurent Nathalie', Categorie: 'Commercial', Poste: 'Communication' },
-  { id: '15', Nom: 'Simon Patrick', Categorie: 'Gestion', Poste: 'Qualité' },
-  { id: '16', Nom: 'Michel Sylvie', Categorie: 'Technique', Poste: 'Base de Données' },
-  { id: '17', Nom: 'Leclerc Bruno', Categorie: 'Commercial', Poste: 'Export' },
-  { id: '18', Nom: 'Chevalier Martine', Categorie: 'Gestion', Poste: 'Logistique' },
-  { id: '19', Nom: 'Blanc Frédéric', Categorie: 'Technique', Poste: 'Intégration' },
+  
+
 ]; // placeholder, renvoie un tableau vide pour le moment
 }
 

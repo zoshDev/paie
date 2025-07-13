@@ -14,7 +14,7 @@ import TestRubricForm from '../pages/TestRubricForm';
 import CompaniesListPage from '@/pages/company/CompaniesListPage';
 import EchelonListPage from '@/pages/echelon/EchelonListPage';
 import CategorieListPage from '@/pages/categoriess/CategorieListPage';
-import CategorieEchelonGrid from '@/pages/bareme/CategorieEchelonGrid';
+import CategorieEchelonGrid from '@/pages/categorieEchelon/CategorieEchelonGrid'; //import CategorieEchelonGrid from '@/pages/bareme/CategorieEchelonGrid';
 const router = createBrowserRouter([
   {
     path: '/login',

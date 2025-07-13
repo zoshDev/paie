@@ -1,0 +1,7 @@
+env
+.env
+*cache*
+migrations/versions
+chromedriver-linux64
+.vscode
+*.log
