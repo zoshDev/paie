@@ -1,4 +1,6 @@
-export const profilPaieFormSections = [
+import type { FormSection} from "@/components/form/types";
+
+export const profilPaieFormSections: FormSection[] = [
   {
     title: 'Informations du Profil',
     columns: 2,
@@ -19,7 +21,7 @@ export const profilPaieFormSections = [
       {
         name: 'elements',
         label: 'Rubriques associées',
-        type: 'multiselect',//'dynamic-list',// m
+        type: 'rubriqueSelector',//'dynamic-list',// m
         itemFields: [
           { name: 'code', label: 'Code', type: 'text' },
           { name: 'libelle', label: 'Libellé', type: 'text' },

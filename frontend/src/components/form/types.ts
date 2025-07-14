@@ -8,7 +8,8 @@ export type FieldType =
   | 'multiselect'
   | 'checkbox'
   | 'date'
-  | 'hidden';
+  | 'hidden'
+  | 'rubriqueSelector';
 
 export interface SelectOption {
   value: string | number;
@@ -35,6 +36,7 @@ export interface FormField {
   dependsOn?: string;
   icon?: React.ReactNode;
   showWhen?: (values: any) => boolean;
+  itemFields?: FormField[]
 }
 
 export interface FormSection {

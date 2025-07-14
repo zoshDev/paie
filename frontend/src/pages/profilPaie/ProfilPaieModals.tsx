@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
-import EntityModals from "../../components/ui/Modal/EntityModal";
-import ProfilPaieForm from "../../components/form/ProfilPaieForm";
-import GenericDuplicateForm from "../../components/form/GenericDuplicateForm";
+import React from "react";
+import EntityModals from "@/components/ui/Modal/EntityModal";
 import ProfilPaieViewDetails from "./ProfilPaieViewDetails";
+import GenericDuplicateForm from "@/components/form/GenericDuplicateForm";
+import ProfilPaieForm from "./ProfilPaieForm";
 import type { RoleProfilPaie } from "./types";
 
 interface ProfilPaieModalsProps {
@@ -24,11 +24,6 @@ const ProfilPaieModals: React.FC<ProfilPaieModalsProps> = ({
   onDeleteConfirm,
   isSubmitting,
 }) => {
-  const stableInitialData = useMemo(
-    () => selectedProfil || {},
-    [selectedProfil?.id]
-  );
-
   return (
     <EntityModals
       mode={modalMode}
@@ -40,7 +35,7 @@ const ProfilPaieModals: React.FC<ProfilPaieModalsProps> = ({
       isSubmitting={isSubmitting}
       renderEditForm={() => (
         <ProfilPaieForm
-          initialData={stableInitialData}
+          initialData={selectedProfil || {}}
           onSubmit={onSubmit}
           isSubmitting={isSubmitting}
         />
