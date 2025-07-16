@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { EyeIcon, PencilIcon, TrashIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import type { MenuAction } from "../ui/Menu/MenuAction";
 
 export interface Column<T> {
   header: string;
@@ -21,6 +22,9 @@ interface DataTableProps<T> {
   configureIcon?: React.ReactNode;
   configureTitle?: string;
 
+  extraActions?: (item: T) => MenuAction[];
+
+
   onToggleSelectedId?: (id: string) => void;
   onToggleAllSelected?: () => void;
   onView?: (item: T) => void;
@@ -31,7 +35,7 @@ interface DataTableProps<T> {
   onClearSelection?: () => void;
 }
 
-const DataTable = <T extends { id: string }>({
+const DataTable = <T extends { id: string|number }>({
   data,
   columns,
   isAllSelected = false,
@@ -48,7 +52,8 @@ const DataTable = <T extends { id: string }>({
   onEdit,
   onDelete,
   onConfigure,
-  onClearSelection
+  onClearSelection,
+  extraActions
 }: DataTableProps<T>) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(rowsPerPageOptions[0]);
@@ -115,8 +120,8 @@ const DataTable = <T extends { id: string }>({
                   {col.isSelection ? (
                     <input
                       type="checkbox"
-                      checked={selectedIds.includes(item.id)}
-                      onChange={() => onToggleSelectedId?.(item.id)}
+                      checked={selectedIds.includes(String(item.id))}
+                      onChange={() => onToggleSelectedId?.(String(item.id))}
                       className="form-checkbox h-4 w-4 text-indigo-500"
                     />
                   ) : col.render ? (
@@ -158,6 +163,16 @@ const DataTable = <T extends { id: string }>({
                   >
                     <TrashIcon className="w-5 h-5" />
                   </button>
+                  {extraActions?.(item).map((action: MenuAction, index: number) => (
+                    <button
+                      key={`extra-action-${index}`}
+                      onClick={() => action.onClick?.(item)}
+                      className="text-gray-400 hover:text-blue-600 transition-all duration-200 transform hover:scale-110"
+                      aria-label={action.label}
+                    >
+                      {action.icon}
+                    </button>
+                  ))}
                 </div>
               </td>
             </tr>

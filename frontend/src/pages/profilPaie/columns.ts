@@ -4,6 +4,7 @@ import type { RoleProfilPaie } from "./types";
 export const profilPaieColumns: Column<RoleProfilPaie>[] = [
   { 
       header: '', 
+      
       key: 'select' as keyof RoleProfilPaie,
       isSelection: true, 
   },

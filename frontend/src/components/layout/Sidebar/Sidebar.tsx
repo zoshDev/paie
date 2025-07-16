@@ -51,6 +51,11 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
       path: '/categories',
     },
     {
+      title: 'Elements de salaire',
+      icon: <FolderIcon className="h-5 w-5" />,
+      path: '/elements-salaire',
+    },
+    {
       title: 'Profils de paie',
       icon: <FolderIcon className="h-5 w-5" />,
       path: '/profil-paie',

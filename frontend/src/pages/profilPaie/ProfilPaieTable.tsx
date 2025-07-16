@@ -19,11 +19,6 @@ interface ProfilPaieTableProps {
   onBulkDelete: () => void;
 }
 
-const columns = [
-  { accessorKey: "roleName", header: "Nom du Profil" },
-  { accessorKey: "categorie", header: "Catégorie" },
-  { accessorKey: "description", header: "Description" }
-];
 
 const ProfilPaieTable: React.FC<ProfilPaieTableProps> = ({
   profilsPaie,
@@ -59,7 +54,7 @@ const ProfilPaieTable: React.FC<ProfilPaieTableProps> = ({
 
       <DataTable
         data={profilsPaie}
-        columns={columns}
+        columns={profilPaieColumns}
         selectedIds={selectedIds}
         onToggleSelectedId={toggleSelectedId}
         onToggleAllSelected={toggleAllSelected}

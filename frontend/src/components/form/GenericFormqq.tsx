@@ -11,7 +11,7 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 export interface FormField {
   name: string;
   label: string;
-  type: "text" | "number" | "email" | "select" | "textarea" | "bareme" | "rubric_method_calculator";
+  type: "text" | "number" | "email" | "select" | "textarea" | "bareme" | "rubric_method_calculator" | "checkbox";
   options?: { label: string; value: string }[];
   required?: boolean;
   icon?: React.ReactNode;

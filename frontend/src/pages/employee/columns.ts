@@ -11,5 +11,6 @@ export const employeeColumns: Column<Employee>[] = [
   { header: 'Nom', key: 'Nom' },
   { header: 'Catégorie', key: 'Categorie' },
   { header: 'Poste', key: 'Poste' },
+  
   //{ header: 'Actions', key: 'actions' as keyof Employee, isActions: true},
 ]

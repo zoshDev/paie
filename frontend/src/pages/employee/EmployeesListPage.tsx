@@ -21,13 +21,15 @@ import {
   ChevronDownIcon,
   UserIcon,
   EnvelopeIcon,
-  TrashIcon
+  TrashIcon,
+  DocumentTextIcon 
 } from '@heroicons/react/24/outline';
 
 import type { Employee } from './types';
 import type { FormField } from '../../components/form/types';
 import useCategorieEchelons from '../categorieEchelon/useCategorieEchelons';
-import useCompanies from '../company/useCompanies';
+import  {contractService } from './contract/contractService';
+import { contractFormSections } from './contract/contractFormSections';
 
 const EmployeesListPage: React.FC = () => {
   const {
@@ -40,6 +42,7 @@ const EmployeesListPage: React.FC = () => {
     clearSelection,
     isAllSelected
   } = useEmployees();
+
 
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [modalMode, setModalMode] = useState<'view' | 'edit' | 'delete' | 'create' | 'bulk-delete' | null>(null);
@@ -97,10 +100,24 @@ const EmployeesListPage: React.FC = () => {
   ];
 
   //Appels aux API externes
-  const { categorieEchelons } = useCategorieEchelons();
-  const { companies } = useCompanies();
+  //const { categorieEchelons } = useCategorieEchelons();
+  //const { companies } = useCompanies();
+  const {associations} = useCategorieEchelons();
 
-  
+  //GESTION ETAT MODAL CONTRAT
+  const [selectedContractEmployee, setSelectedContractEmployee] = useState<Employee | null>(null);
+  const [contractMode, setContractMode] = useState<"create" | "view" | null>(null);
+
+  const openContractModal = (emp: Employee) => {
+    setSelectedContractEmployee(emp);
+    setContractMode("create");
+  };
+
+  const closeContractModal = () => {
+    setSelectedContractEmployee(null);
+    setContractMode(null);
+  };
+
 
   return (
     <div className="container mx-auto p-6">
@@ -156,7 +173,58 @@ const EmployeesListPage: React.FC = () => {
         onEdit={(emp) => openModal(emp, 'edit')}
         onDelete={(emp) => openModal(emp, 'delete')}
         onBulkDelete={openBulkDeleteModal}
+        // ✅ Ajout du bouton Contrat
+        extraActions={(employee) => [
+          {
+            label: "Contrat",
+            icon: <DocumentTextIcon className="w-5 h-5 text-blue-600" />,
+            onClick: () => openContractModal(employee),
+          },
+        ]}
       />
+
+      {selectedContractEmployee && contractMode && (
+      <EntityModals
+        mode={contractMode}
+        entity={selectedContractEmployee}
+        selectedIds={selectedIds}
+        onClose={closeContractModal}
+        renderEditForm={(emp) => (
+          <GenericForm
+            sections={contractFormSections}
+            initialData={{
+              employeId: emp?.id,
+              dateDebut: "",
+              dateFin: "",
+              typeContrat: "",
+              salaireBase: 0,
+            }}
+            onSubmit={async (values) => {
+              try {
+                await contractService.create(values);
+                const contrat = await contractService.getByEmployeId(emp!.id);
+                toast.success("Contrat enregistré ✅");
+                setSelectedContractEmployee({ ...emp!, contrat });
+                setContractMode("view");
+              } catch (error) {
+                toast.error("Erreur lors de l’enregistrement ❌");
+                console.error(error);
+              }
+            }}
+            submitLabel="Enregistrer"
+          />
+        )}
+        renderView={(emp) => (
+          <div className="space-y-2 text-sm">
+            <p><strong>Type :</strong> {emp?.contrat?.typeContrat}</p>
+            <p><strong>Date Début :</strong> {emp?.contrat?.dateDebut}</p>
+            <p><strong>Date Fin :</strong> {emp?.contrat?.dateFin}</p>
+            <p><strong>Salaire :</strong> {emp?.contrat?.salaireBase} FCFA</p>
+          </div>
+        )}
+      />
+    )}
+
 
       <EntityModals
         selectedIds={selectedIds}

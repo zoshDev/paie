@@ -1,0 +1,224 @@
+import React, { useState } from "react";
+
+// 📦 Composants génériques
+import PageHeader from "@/components/layout/PageHeader";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import DataTable from "@/components/table/DataTable";
+import Menu, { MenuItem } from "@/components/ui/Menu/Menu";
+import BulkActionsBar from "@/components/ui/BulkActionsBar";
+import EntityModals from "@/components/ui/Modal/EntityModal";
+import GenericForm from "@/components/form/GenericForm";
+
+// 🔧 Imports liés au module
+import { elementSalaireColumns } from "./elementSalaire.columns";
+import { elementSalaireFormSections } from "./elementSalaireFormSections";
+import { elementSalaireService } from "./elementSalaireService";
+import useElementsSalaire from "./useElementSalaire";
+
+// ✅ Icônes
+import {
+  PlusIcon,
+  ArrowDownTrayIcon,
+  ArrowUpTrayIcon,
+  ChevronDownIcon,
+  CurrencyDollarIcon,
+  TrashIcon
+} from "@heroicons/react/24/outline";
+
+// 🧠 Type backend
+import type { ElementSalaire } from "./elementSalaire";
+
+const ElementSalaireListPage: React.FC = () => {
+  // 🧠 Hook personnalisé qui gère données et état
+  const {
+    elements,
+    searchTerm,
+    setSearchTerm,
+    selectedIds,
+    toggleSelectedId,
+    toggleAllSelected,
+    clearSelection,
+    isAllSelected
+  } = useElementsSalaire();
+
+  const elementsWithId = elements.map((el) => ({
+  ...el,
+  id: String(el.id), // ✅ compatibilité avec DataTable
+}));
+
+  
+  // 🧠 Modale active (create, edit, delete, view…)
+  const [selectedElement, setSelectedElement] = useState<ElementSalaire | null>(null);
+  const [modalMode, setModalMode] = useState<'view' | 'edit' | 'delete' | 'create' | 'bulk-delete' | null>(null);
+  const [isActionsOpen, setIsActionsOpen] = useState(false);
+
+  // 🔄 Ouvrir une modale avec un élément
+  const openModal = (element: ElementSalaire | null, mode: typeof modalMode) => {
+    setSelectedElement(element);
+    setModalMode(mode);
+  };
+
+  const closeModal = () => {
+    setSelectedElement(null);
+    setModalMode(null);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const toggleActions = () => setIsActionsOpen((prev) => !prev);
+
+  const handleAddElement = () => {
+    openModal(null, "create");
+    setIsActionsOpen(false);
+  };
+
+  const handleImport = () => {
+    alert("Import Excel non disponible");
+    setIsActionsOpen(false);
+  };
+
+  const handleExport = () => {
+    alert("Export Excel non disponible");
+    setIsActionsOpen(false);
+  };
+
+  const actions = [
+    {
+      label: "Supprimer",
+      icon: <TrashIcon className="w-4 h-4" />,
+      onClick: () => openModal(null, "bulk-delete"),
+      className: "flex items-center gap-1 px-2 py-1 text-red-600 hover:text-white hover:bg-red-600 rounded transition"
+    }
+  ];
+
+  return (
+    <div className="container mx-auto p-6">
+      {/* 🧱 En-tête de la page */}
+      <PageHeader
+        title="Éléments de Salaire"
+        description="Gérez les primes, retenues et paramètres calculés"
+      >
+        <div className="flex items-center space-x-4">
+          {/* 🔍 Champ de recherche */}
+          <Input
+            type="text"
+            placeholder="Rechercher un élément..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="w-full md:flex-1"
+          />
+          {/* ⚙️ Bouton Actions */}
+          <div className="relative">
+            <Button onClick={toggleActions} className="flex items-center whitespace-nowrap">
+              <span>Actions</span>
+              <ChevronDownIcon className="w-5 h-5 ml-2" />
+            </Button>
+            <Menu isOpen={isActionsOpen} onClose={() => setIsActionsOpen(false)}>
+              <MenuItem onClick={handleAddElement} icon={<PlusIcon className="w-5 h-5" />}>
+                Ajouter un Élément
+              </MenuItem>
+              <MenuItem onClick={handleImport} icon={<ArrowDownTrayIcon className="w-5 h-5" />}>
+                Importer
+              </MenuItem>
+              <MenuItem onClick={handleExport} icon={<ArrowUpTrayIcon className="w-5 h-5" />}>
+                Exporter
+              </MenuItem>
+            </Menu>
+          </div>
+        </div>
+      </PageHeader>
+
+      {/* 🔁 Barre d’actions groupées si sélection multiple */}
+      {selectedIds.length >= 2 && (
+        <div className="flex justify-end mb-2">
+          <BulkActionsBar
+            count={selectedIds.length}
+            actions={actions}
+            onClearSelection={clearSelection}
+          />
+        </div>
+      )}
+
+      {/* 📊 Tableau des éléments */}
+      
+      <DataTable
+        data={elementsWithId}//{elements}
+        columns={elementSalaireColumns}
+        //Ligne cle
+        //selectedIds={selectedIds.map((id) => String(id))} // ✅ conversion ici
+        selectedIds={selectedIds.map((id) => String(id))} // ✅ conversion ici
+        onToggleSelectedId={(id) => toggleSelectedId(Number(id))}
+
+        //onToggleAllSelected={toggleAllSelected}
+        onToggleAllSelected={() => toggleAllSelected(elements)}
+        
+        isAllSelected={isAllSelected}
+        bodyBackgroundIllustration={<div className="text-[120px] text-yellow-100">💰</div>}
+        onClearSelection={clearSelection}
+        onView={(element) => openModal(element, "view")}
+        onEdit={(element) => openModal(element, "edit")}
+        onDelete={(element) => openModal(element, "delete")}
+        onBulkDelete={() => openModal(null, "bulk-delete")}
+      />
+
+      {/* 🧾 Modale Générique */}
+      <EntityModals
+        //selectedIds={selectedIds}
+        selectedIds={selectedIds.map((id) => String(id))} // ✅ conversion en string[]
+        mode={modalMode}
+        //entity={selectedElement}
+        entity={selectedElement ? { ...selectedElement, id: String(selectedElement.variableId) } : null}
+        formFields={elementSalaireFormSections}
+        onClose={closeModal}
+        onDeleteConfirm={(id) => {
+          alert(`Élément supprimé : ${id}`);
+          clearSelection();
+          closeModal();
+        }}
+        renderEditForm={(element) => (
+          <GenericForm
+            sections={elementSalaireFormSections}
+            initialData={element ?? {}}
+            onSubmit={async (values) => {
+              try {
+                if (modalMode === "create") {
+                  await elementSalaireService.create(values);
+                  alert("Élément créé ✅");
+                } else if (element) {
+                  await elementSalaireService.update(Number(element.id), values);
+                  alert("Élément mis à jour ✨");
+                }
+                closeModal();
+              } catch (err) {
+                alert("Erreur ❌");
+                console.error(err);
+              }
+            }}
+            backgroundIllustration={<CurrencyDollarIcon className="w-40 h-40 text-yellow-100" />}
+            submitLabel={modalMode === "create" ? "Créer" : "Mettre à jour"}
+          />
+        )}
+        renderView={(element) =>
+          modalMode === "bulk-delete" ? (
+            <div>
+              <p>Suppression de <strong>{selectedIds.length}</strong> éléments.</p>
+              <p className="text-sm text-red-600">Action irréversible.</p>
+            </div>
+          ) : (
+            <div className="space-y-1 text-sm">
+              <p><strong>Libellé :</strong> {element?.libelle}</p>
+              <p><strong>Type :</strong> {element?.type_element}</p>
+              <p><strong>Nature :</strong> {element?.nature}</p>
+              <p><strong>Prorata base :</strong> {element?.prorataBase}</p>
+            </div>
+          )
+        }
+      />
+    </div>
+  );
+};
+
+export default ElementSalaireListPage;

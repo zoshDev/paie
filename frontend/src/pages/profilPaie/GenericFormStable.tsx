@@ -5,11 +5,15 @@ import type { FormSection, FormField, SelectOption as Option } from "@/component
 import RubriqueSelector from "@/components/form/RubriqueSelector";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import type { ElementSalaire } from "./types";
 
 const schema = z.object({
   roleName: z.string().min(1),
   categorie: z.string().min(1),
+  elements: z.array(z.any()).optional(),
 }).passthrough();
+
+type FormValues = z.infer<typeof schema>;
 
 interface GenericFormStableProps {
   sections: FormSection[];
@@ -32,8 +36,8 @@ const GenericFormStable: React.FC<GenericFormStableProps> = ({
     control,
     watch,
     setValue,
-    //formState: { errors }
-  } = useForm({
+    formState: { errors }
+  } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: initialValues,
   });
@@ -41,8 +45,8 @@ const GenericFormStable: React.FC<GenericFormStableProps> = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       {sections.map((section: FormSection, sIndex: number) => (
-        <div key={sIndex}>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        <div key={sIndex} className="bg-white border rounded-md shadow-sm p-6 space-y-6">
+          <h3 className="text-lg font-semibold text-gray-800 border-b mb-4">
             {section.title}
           </h3>
           <div className={`grid grid-cols-1 md:grid-cols-${section.columns} gap-6`}>
@@ -60,6 +64,11 @@ const GenericFormStable: React.FC<GenericFormStableProps> = ({
                         </option>
                       ))}
                     </select>
+                    {errors[field.name] && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors[field.name]?.message as string}
+                      </p>
+                    )}
                   </div>
                 );
               }
@@ -71,6 +80,11 @@ const GenericFormStable: React.FC<GenericFormStableProps> = ({
                       {field.label}
                     </label>
                     <textarea {...register(field.name)} className="input" rows={3} />
+                   {errors[field.name] && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {(errors[field.name]?.message as string) || "Champ invalide"}
+                      </p>
+                    )} 
                   </div>
                 );
               }
@@ -87,7 +101,7 @@ const GenericFormStable: React.FC<GenericFormStableProps> = ({
               if (field.type === "multiselect" && field.itemFields) {
                 const { fields: rubFields, append, remove } = useFieldArray({
                   control,
-                  name: field.name,
+                  name: field.name as keyof FormValues["elements"],
                 });
 
                 return (
@@ -151,7 +165,7 @@ const GenericFormStable: React.FC<GenericFormStableProps> = ({
                       {field.label}
                     </label>
                     <RubriqueSelector
-                      selectedRubriques={watch(field.name) || []}
+                      selectedRubriques={watch(field.name) as ElementSalaire[] ?? []}
                       onChange={(rubriques) => setValue(field.name, rubriques)}
                     />
                   </div>

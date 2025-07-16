@@ -39,7 +39,7 @@ const ProfilPaieModals: React.FC<ProfilPaieModalsProps> = ({
           onSubmit={onSubmit}
           isSubmitting={isSubmitting}
         />
-      )}
+    )}
       renderView={() => (
         <ProfilPaieViewDetails profil={selectedProfil} />
       )}

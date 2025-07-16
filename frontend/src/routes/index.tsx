@@ -15,6 +15,7 @@ import CompaniesListPage from '@/pages/company/CompaniesListPage';
 import EchelonListPage from '@/pages/echelon/EchelonListPage';
 import CategorieListPage from '@/pages/categoriess/CategorieListPage';
 import CategorieEchelonGrid from '@/pages/categorieEchelon/CategorieEchelonGrid'; //import CategorieEchelonGrid from '@/pages/bareme/CategorieEchelonGrid';
+import ElementSalaireListPage from '@/pages/elementSalaire/ElementSalaireListPage';
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
           {
             path: 'societes',
             element: <CompaniesListPage />,
+          },
+          {
+            path: 'elements-salaire',
+            element: <ElementSalaireListPage />,
           },
           {
             path: 'bareme',

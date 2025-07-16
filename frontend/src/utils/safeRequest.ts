@@ -56,13 +56,13 @@ export async function safeUpdate<TRequest, TResponse>(
   data: TRequest
 ): Promise<TResponse | null> {
   try {
-    const response: AxiosResponse = await api.put(endpoint, data);
-    toast.success(`[PUT ${endpoint}] Mise à jour réussie ✅`);
+    const response: AxiosResponse = await api.patch(endpoint, data);
+    toast.success(`[PATCH ${endpoint}] Mise à jour réussie ✅`);
     return response.data;
   } catch (error: any) {
     if (handlePydanticError(endpoint, error)) return null;
-    toast.error(`[PUT ${endpoint}] Échec de la mise à jour ❌`);
-    console.error(`[🚫 ${endpoint}] Erreur PUT`, error.message || error);
+    toast.error(`[PATCH ${endpoint}] Échec de la mise à jour ❌`);
+    console.error(`[🚫 ${endpoint}] Erreur PATCH`, error.message || error);
     return null;
   }
 }
