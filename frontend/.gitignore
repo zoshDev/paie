@@ -9,7 +9,6 @@ venv/
 
 #
 backend/
-backend.zip
 
 # Node.js
 node_modules/

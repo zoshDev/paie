@@ -14,6 +14,8 @@ import {employeService} from '@/services/employeeService';
 import useEmployees from './useEmployees';
 import toast from 'react-hot-toast';
 
+import PayrollModal from '@/components/payroll/PayrollModal';
+
 import {
   PlusIcon,
   ArrowDownTrayIcon,
@@ -22,7 +24,8 @@ import {
   UserIcon,
   EnvelopeIcon,
   TrashIcon,
-  DocumentTextIcon 
+  DocumentTextIcon,
+  ClipboardDocumentListIcon 
 } from '@heroicons/react/24/outline';
 
 import type { Employee } from './types';
@@ -43,6 +46,12 @@ const EmployeesListPage: React.FC = () => {
     isAllSelected
   } = useEmployees();
 
+  // Ouvre la modal de paie
+  const [isPayrollModalOpen, setPayrollModalOpen] = useState(false);
+  const openPayrollModal = (employee: Employee) => {
+  setSelectedEmployee(employee);
+  setPayrollModalOpen(true);
+  };
 
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [modalMode, setModalMode] = useState<'view' | 'edit' | 'delete' | 'create' | 'bulk-delete' | null>(null);
@@ -52,6 +61,7 @@ const EmployeesListPage: React.FC = () => {
     setSelectedEmployee(employee);
     setModalMode(mode);
   };
+
 
   const closeModal = () => {
     setSelectedEmployee(null);
@@ -180,6 +190,11 @@ const EmployeesListPage: React.FC = () => {
             icon: <DocumentTextIcon className="w-5 h-5 text-blue-600" />,
             onClick: () => openContractModal(employee),
           },
+          {
+            label: 'Fiche de Paie',
+            icon: <ClipboardDocumentListIcon  className="w-5 h-5 text-yellow-500" />,
+            onClick: () => openPayrollModal(employee),
+          },
         ]}
       />
 
@@ -225,6 +240,13 @@ const EmployeesListPage: React.FC = () => {
       />
     )}
 
+    {selectedEmployee && (
+      <PayrollModal
+        open={isPayrollModalOpen}
+        onClose={() => setPayrollModalOpen(false)}
+        employee={selectedEmployee}
+      />
+    )}
 
       <EntityModals
         selectedIds={selectedIds}

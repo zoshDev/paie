@@ -2,7 +2,7 @@ import React from "react";
 import DeleteConfirmation from "./DeleteConfirmation";
 import EntityViewContent from "./EntityViewContent";
 import GenericForm from "../../form/GenericForm";
-import type { FormField } from "../../form/GenericForm";
+import type { FormField, FormSection } from "../GenericForm";
 import RubricForm from "../../form/RubricForm";
 import type { Rubric } from "../../../pages/rubric/types";
 import DetailsRenderer from '@/components/ui/DetailsRenderer';
@@ -19,6 +19,7 @@ interface EntityModalsProps<T extends Entity> {
   entity: T | null;
   selectedIds: string[]; // pour les opérations de suppression multiple
   formFields?: FormField[];
+  sections?: FormSection[];
   onClose: () => void;
   onDeleteConfirm?: (id: string) => void;
   renderEditForm?: (entity: T | null) => React.ReactNode;
@@ -36,6 +37,7 @@ const EntityModals = <T extends Entity>({
   entity,
   selectedIds,
   formFields,
+  sections,
   onClose,
   onDeleteConfirm,
   renderEditForm,
@@ -104,9 +106,12 @@ const EntityModals = <T extends Entity>({
         );
       default:
         // Formulaire générique par défaut
-        return formFields ? (
+        const hasForm = !!sections || !!formFields;
+        if (!hasForm) return null;
+        return (formFields || sections) ? (
           <div className="w-full">
             <GenericForm
+              sections={sections}
               fields={formFields}
               initialValues={mode === "create" ? {} : entity || {}}
               onSubmit={(data) => {

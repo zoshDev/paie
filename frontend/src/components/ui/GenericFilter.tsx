@@ -10,7 +10,8 @@ export type FilterFieldType =
   | 'date'
   | 'daterange'
   | 'number'
-  | 'numberrange';
+  | 'numberrange'
+  | 'rubriqueSelector';
 
 // Interface for options in select fields
 export interface FilterOption {

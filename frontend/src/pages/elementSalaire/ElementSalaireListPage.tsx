@@ -171,7 +171,7 @@ const ElementSalaireListPage: React.FC = () => {
         mode={modalMode}
         //entity={selectedElement}
         entity={selectedElement ? { ...selectedElement, id: String(selectedElement.variableId) } : null}
-        formFields={elementSalaireFormSections}
+        //formFields={elementSalaireFormSections}
         onClose={closeModal}
         onDeleteConfirm={(id) => {
           alert(`Élément supprimé : ${id}`);
@@ -202,20 +202,72 @@ const ElementSalaireListPage: React.FC = () => {
           />
         )}
         renderView={(element) =>
-          modalMode === "bulk-delete" ? (
-            <div>
-              <p>Suppression de <strong>{selectedIds.length}</strong> éléments.</p>
-              <p className="text-sm text-red-600">Action irréversible.</p>
-            </div>
-          ) : (
-            <div className="space-y-1 text-sm">
-              <p><strong>Libellé :</strong> {element?.libelle}</p>
-              <p><strong>Type :</strong> {element?.type_element}</p>
-              <p><strong>Nature :</strong> {element?.nature}</p>
-              <p><strong>Prorata base :</strong> {element?.prorataBase}</p>
-            </div>
-          )
-        }
+  modalMode === "bulk-delete" ? (
+    <div>
+      <p>Suppression de <strong>{selectedIds.length}</strong> éléments.</p>
+      <p className="text-sm text-red-600">Action irréversible.</p>
+    </div>
+  ) : (
+    <div className="space-y-3 text-sm text-gray-800">
+      <p>
+        <strong>Libellé :</strong> {element?.libelle}
+      </p>
+      <p>
+        <strong>Code :</strong>{" "}
+        <span className="text-blue-700 font-mono">{element?.libelle}</span>
+      </p>
+      <p>
+        <strong>Type :</strong>{" "}
+        {element?.type_element === "prime" ? "Prime" : "Retenue"}
+      </p>
+      <p>
+        <strong>Nature :</strong>{" "}
+        {element?.nature === "fixe" ? "Fixe" : "Variable"}
+      </p>
+      <div className="flex flex-wrap gap-3 text-xs text-gray-700 mt-2">
+        <span
+          className={`px-2 py-1 rounded ${
+            element?.imposable ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          }`}
+        >
+          Imposable : {element?.imposable ? "Oui" : "Non"}
+        </span>
+        <span
+          className={`px-2 py-1 rounded ${
+            element?.soumisCnps ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          }`}
+        >
+          CNPS : {element?.soumisCnps ? "Oui" : "Non"}
+        </span>
+        <span
+          className={`px-2 py-1 rounded ${
+            element?.partEmploye ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          Part Employé
+        </span>
+        <span
+          className={`px-2 py-1 rounded ${
+            element?.partEmployeur ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          Part Employeur
+        </span>
+        <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700">
+          Prorata base : {element?.prorataBase}%
+        </span>
+      </div>
+
+      <div>
+        <p className="font-medium text-gray-700">Processus de calcul :</p>
+        <pre className="bg-gray-50 p-3 rounded border border-gray-200 text-[11px] text-gray-600 overflow-x-auto">
+          {JSON.stringify(element?.processCalculJson, null, 2)}
+        </pre>
+      </div>
+    </div>
+  )
+}
+
       />
     </div>
   );

@@ -16,6 +16,7 @@ import EchelonListPage from '@/pages/echelon/EchelonListPage';
 import CategorieListPage from '@/pages/categoriess/CategorieListPage';
 import CategorieEchelonGrid from '@/pages/categorieEchelon/CategorieEchelonGrid'; //import CategorieEchelonGrid from '@/pages/bareme/CategorieEchelonGrid';
 import ElementSalaireListPage from '@/pages/elementSalaire/ElementSalaireListPage';
+import RoleProfilPaieListPage from '@/pages/roleProfilPaie/RoleProfilPaieListPage';
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -57,10 +58,10 @@ const router = createBrowserRouter([
             path: '/profil-paie',
             element: <ProfilPaieListPage />,
           },
-          /*{
-            path: 'categories',
-            element: <CategorieListPage />,
-          },*/
+          {
+            path: 'profilpaie',
+            element: <RoleProfilPaieListPage />,
+          },
           {
             path: 'settings',
             element: <SettingsPage />,

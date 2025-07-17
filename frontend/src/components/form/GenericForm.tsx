@@ -13,6 +13,7 @@ import type { FormField, FormSection } from './types';
 interface GenericFormProps {
   sections?: FormSection[];
   fields?: FormField[];
+  isSubmitting?: boolean;
   onSubmit: (data: any) => void;
   onCancel?: () => void;
   initialData?: any;
@@ -20,6 +21,7 @@ interface GenericFormProps {
   cancelLabel?: string;
   isModal?: boolean;
   modalTitle?: string;
+  initialValues?: Record<string, any>;
   onValueChange?: (values: any) => void;
   backgroundIllustration?: React.ReactNode;
 }
