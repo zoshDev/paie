@@ -45,15 +45,19 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
         { title: 'Grille Categorie', path: '/bareme/categorie-echelon'},
       ],
     },
-    {
+    /*{
       title: 'Catégories',
       icon: <FolderIcon className="h-5 w-5" />,
       path: '/categories',
-    },
+    },*/
     {
-      title: 'Elements de salaire',
+      title: 'Rubriques',
       icon: <FolderIcon className="h-5 w-5" />,
-      path: '/elements-salaire',
+      path: '/rubriques',
+       submenu: [
+        { title: 'Variables', path: '/rubriques/variables' },
+        { title: 'Elements de salaire', path: '/rubriques/elements-salaire' },
+      ],
     },
     /*{
       title: 'Profils de paie',
@@ -61,19 +65,19 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
       path: '/profil-paie',
     },*/
     {
-      title: 'Profils-de-paie',
+      title: 'Profils de paie',
       icon: <FolderIcon className="h-5 w-5" />,
       path: '/profilpaie',
     },
-    {
+    /*{
       title: 'Rubriques',
       icon: <FolderIcon className="h-5 w-5" />,
       path: '/rubrics',
       /*submenu: [
         { title: 'Liste', path: '/rubrics/list' },
         { title: 'Ajouter', path: '/rubrics/add' },
-      ],*/
-    },
+      ],
+    },*/
     {
       title: 'Employés',
       icon: <UsersIcon className="h-5 w-5" />,

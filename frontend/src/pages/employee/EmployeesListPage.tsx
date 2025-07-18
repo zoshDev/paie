@@ -13,6 +13,7 @@ import { employeeFormSections } from '@/schemas/employee/employee.schema';
 import {employeService} from '@/services/employeeService';
 import useEmployees from './useEmployees';
 import toast from 'react-hot-toast';
+import type { RawEmployee } from '@/pages/employee/rawEmployee';
 
 import PayrollModal from '@/components/payroll/PayrollModal';
 
@@ -28,11 +29,12 @@ import {
   ClipboardDocumentListIcon 
 } from '@heroicons/react/24/outline';
 
-import type { Employee } from './types';
+//import type { Employee } from './types';
 import type { FormField } from '../../components/form/types';
 import useCategorieEchelons from '../categorieEchelon/useCategorieEchelons';
 import  {contractService } from './contract/contractService';
 import { contractFormSections } from './contract/contractFormSections';
+import { toEntity } from '@/utils/transformers';
 
 const EmployeesListPage: React.FC = () => {
   const {
@@ -48,16 +50,22 @@ const EmployeesListPage: React.FC = () => {
 
   // Ouvre la modal de paie
   const [isPayrollModalOpen, setPayrollModalOpen] = useState(false);
-  const openPayrollModal = (employee: Employee) => {
+  const openPayrollModal = (employee: RawEmployee) => {
   setSelectedEmployee(employee);
   setPayrollModalOpen(true);
   };
+ function closePayrollModal() {
+  setPayrollModalOpen(false);
+  setSelectedEmployee(null);
+}
 
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [modalMode, setModalMode] = useState<'view' | 'edit' | 'delete' | 'create' | 'bulk-delete' | null>(null);
+
+  const [selectedEmployee, setSelectedEmployee] = useState<RawEmployee | null>(null);
+  const [modalMode, setModalMode] = useState<'view' | 'edit' | 'delete' | 'create' | 'bulk-delete' | "paie-actions" | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
 
-  const openModal = (employee: Employee | null, mode: typeof modalMode) => {
+
+  const openModal = (employee: RawEmployee | null, mode: typeof modalMode) => {
     setSelectedEmployee(employee);
     setModalMode(mode);
   };
@@ -115,10 +123,10 @@ const EmployeesListPage: React.FC = () => {
   const {associations} = useCategorieEchelons();
 
   //GESTION ETAT MODAL CONTRAT
-  const [selectedContractEmployee, setSelectedContractEmployee] = useState<Employee | null>(null);
+  const [selectedContractEmployee, setSelectedContractEmployee] = useState<RawEmployee | null>(null);
   const [contractMode, setContractMode] = useState<"create" | "view" | null>(null);
 
-  const openContractModal = (emp: Employee) => {
+  const openContractModal = (emp: RawEmployee) => {
     setSelectedContractEmployee(emp);
     setContractMode("create");
   };
@@ -128,6 +136,7 @@ const EmployeesListPage: React.FC = () => {
     setContractMode(null);
   };
 
+  
 
   return (
     <div className="container mx-auto p-6">
@@ -170,11 +179,11 @@ const EmployeesListPage: React.FC = () => {
         </div>
       )}
 
-      <DataTable
+      <DataTable<RawEmployee>
         data={employees}
         columns={employeeColumns}
-        selectedIds={selectedIds}
-        onToggleSelectedId={toggleSelectedId}
+        selectedIds={selectedIds.map(String)}
+        onToggleSelectedId={(id) => toggleSelectedId(Number(id))} // ✅ conversion inverse
         onToggleAllSelected={toggleAllSelected}
         isAllSelected={isAllSelected}
         bodyBackgroundIllustration={<div className="text-[120px] text-blue-100">🧑‍💼</div>}
@@ -198,11 +207,19 @@ const EmployeesListPage: React.FC = () => {
         ]}
       />
 
+    {/*Ouverture conditionnelle des modales*/}
+    {isPayrollModalOpen && selectedEmployee && (
+        <PayrollModal
+          isOpen={isPayrollModalOpen}
+          onClose={closePayrollModal}
+          employee={selectedEmployee}
+        />
+    )}
       {selectedContractEmployee && contractMode && (
       <EntityModals
         mode={contractMode}
-        entity={selectedContractEmployee}
-        selectedIds={selectedIds}
+        entity={selectedContractEmployee ? toEntity(selectedContractEmployee) : null}
+        selectedIds={selectedIds.map(String)}
         onClose={closeContractModal}
         renderEditForm={(emp) => (
           <GenericForm
@@ -217,9 +234,10 @@ const EmployeesListPage: React.FC = () => {
             onSubmit={async (values) => {
               try {
                 await contractService.create(values);
-                const contrat = await contractService.getByEmployeId(emp!.id);
+                const contrats = await contractService.getByEmployeId(emp!.id);
+                const contrat = contrats[0]; // On suppose qu'il n'y a qu'un contrat par employé
                 toast.success("Contrat enregistré ✅");
-                setSelectedContractEmployee({ ...emp!, contrat });
+                setSelectedContractEmployee({ ...emp, contrat });
                 setContractMode("view");
               } catch (error) {
                 toast.error("Erreur lors de l’enregistrement ❌");
@@ -249,10 +267,10 @@ const EmployeesListPage: React.FC = () => {
     )}
 
       <EntityModals
-        selectedIds={selectedIds}
+        selectedIds={selectedIds.map((id) => String(id))}//{selectedIds}
         mode={modalMode}
         entity={selectedEmployee}
-        formFields={employeeFields}
+        //={employeeFields}
         onClose={closeModal}
         onDeleteConfirm={(id) => {
           if (modalMode === 'bulk-delete') {

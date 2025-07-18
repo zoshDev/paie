@@ -1,6 +1,40 @@
 //import { FormSection } from '@/components/form/GenericForm';
 import type { FormSection } from '@/components/form/types';
+import { companyService } from '@/services/companyService';
+import { categorieEchelonService } from '@/services/categorieEchelonService';
+import { profilPaieService } from '@/pages/roleProfilPaie/profilPaieService';
+import type { RoleProfilPaie } from '@/pages/profilPaie/types';
 
+// Préparer les tableaux d'options
+export let categorieEchelonOptions: { label: string; value: number }[] = [];
+export let companyOptions: { label: string; value: number }[] = [];
+export let roleOptions: { label: string; value: number }[] = [];
+
+export async function chargerOptionsEmploye() {
+  try {
+    /*const categoriesEchelon = await categorieEchelonService.list();
+    categorieEchelonOptions = categoriesEchelon.map((c) => ({
+      label: c.libelle,
+      value: c.id,
+    }));*/
+
+    const companies = await companyService.list();
+    companyOptions = companies.map((c) => ({
+      label: c.nom,
+      value: c.id,
+    }));
+    console.log("[FormOptions] Options société chargées", companyOptions);
+
+    /*const roles = await profilPaieService.list();
+    roleOptions = roles.map((r) => ({
+      label: r.roleName,
+      value: Number(r.id),
+    }));*/
+  } catch (error) {
+    console.log("[FormOptions] Échec chargement des options employé", roleOptions);
+    console.error("[FormOptions] Échec chargement des données employé", error);
+  }
+}
 
 export const employeeFormSections: FormSection[] = [
   {
@@ -21,8 +55,20 @@ export const employeeFormSections: FormSection[] = [
     title: 'Informations RH',
     columns: 2,
     fields: [
-      { name: 'societeId', label: 'Société', type: 'number', required: true },
-      { name: 'categorieEchelonId', label: 'Catégorie Échelon', type: 'number', required: true },
+      { 
+        name: 'societeId', 
+        label: 'Société', 
+        type: 'select', 
+        required: true,
+        options: companyOptions
+      },
+      { 
+        name: 'categorieEchelonId', 
+        label: 'Catégorie Échelon', 
+        type: 'select', 
+        required: false, 
+        options: categorieEchelonOptions
+      },
     ]
   },
   {
@@ -31,11 +77,16 @@ export const employeeFormSections: FormSection[] = [
     fields: [
       { name: 'pseudo', label: 'Pseudo', type: 'text', required: true },
       { name: 'password', label: 'Mot de passe', type: 'password', required: true },
-      { name: 'roleId', label: 'Rôle(s)', type: 'multiselect', required: false, options: [
-        { value: 1, label: 'Admin' },
-        { value: 2, label: 'RH' },
-        { value: 3, label: 'Employé' },
-      ]},
+      { 
+        name: 'roleId', 
+        label: 'Profil(s) de paie', 
+        type: 'multiselect', 
+        required: false, 
+        options: [
+          { value: 1, label: 'Admin' },
+          { value: 2, label: 'RH' },
+          { value: 3, label: 'Employé' },
+      ]} 
     ]
   }
 ];

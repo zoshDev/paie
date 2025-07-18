@@ -6,13 +6,15 @@ import type { FormField, FormSection } from "../GenericForm";
 import RubricForm from "../../form/RubricForm";
 import type { Rubric } from "../../../pages/rubric/types";
 import DetailsRenderer from '@/components/ui/DetailsRenderer';
-
+import { EmployeePaieModal } from "@/pages/employee/paie/EmployeePaieModal";
+import type { RawEmployee as Employe } from "@/pages/employee/rawEmployee";
+import { isRawEmployee } from "@/utils/typeGuards";
 interface Entity {
   id: string;
   [key: string]: any;
 }
 
-type ModalMode = "view" | "edit" | "delete" | "create" | "bulk-delete" | "configure" | "assign-to-profiles" | "assign-entities" | "duplicate" | null;
+type ModalMode = "view" | "edit" | "delete" | "create" | "bulk-delete" | "configure" | "assign-to-profiles" | "assign-entities" | "duplicate" |"paie-actions" | null;
 
 interface EntityModalsProps<T extends Entity> {
   mode: ModalMode;
@@ -104,6 +106,11 @@ const EntityModals = <T extends Entity>({
             onClose={onClose}
           />
         );
+      case "paie-actions":
+        if (isRawEmployee(entity)) {
+          return <EmployeePaieModal employee={entity} />;
+        }
+        return null;
       default:
         // Formulaire générique par défaut
         const hasForm = !!sections || !!formFields;

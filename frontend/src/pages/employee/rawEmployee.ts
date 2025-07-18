@@ -1,3 +1,10 @@
+export interface Contrat {
+  typeContrat: string;
+  dateDebut: string;
+  dateFin: string;
+  salaireBase: number;
+}
+
 export interface RawEmployee {
   id: number;
   userId: number;
@@ -12,4 +19,6 @@ export interface RawEmployee {
   estLoge: boolean;
   societeId: number;
   categorieEchelonId: number;
+  contrat?: Contrat; // Optional field for contract details
+
 }

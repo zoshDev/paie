@@ -7,6 +7,10 @@ export const profilPaieColumns : Column<ProfilPaie>[] = [
     header: "",
     isSelection: true, // ✅ indique que c’est une colonne pour la case à cocher
   },
+  {
+    key: "id", // ou "id" ou "libelle" → ce champ doit exister dans ElementSalaire
+    header: "ID",
+  },
   { key: 'nom', header:"Nom du Profil" },
   {
     key: 'elements',

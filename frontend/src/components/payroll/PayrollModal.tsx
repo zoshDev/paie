@@ -1,63 +1,38 @@
-import Modal from '@/components/ui/Modal';
-import {
-  TabGroup,
-  TabList,
-  TabPanels,
-  TabPanel
-} from '@headlessui/react';
-import EvaluationPreview from './EvaluationPreview';
-import BulletinForm from './BulletinForm';
-import BulletinHistory from './BulletinHistory';
-import type { Employee } from '@/pages/employee/types';
+import React from "react";
+import type { RawEmployee } from "@/pages/employee/rawEmployee";
+import { EmployeePaieModal } from "@/pages/employee/paie/EmployeePaieModal";
 
 interface PayrollModalProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
-  employee: Employee;
+  employee: RawEmployee | null;
 }
 
+const PayrollModal: React.FC<PayrollModalProps> = ({ isOpen, onClose, employee }) => {
+  if (!isOpen || !employee) return null;
 
-
-
-
-const PayrollModal = ({ open, onClose, employee }: PayrollModalProps) => {
   return (
-    <Modal
-      isOpen={open}
-      onClose={onClose}
-      maxWidth="2xl"
-    >
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold">
-          Fiche de Paie — {employee.name}
-        </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-indigo-100/20 backdrop-blur-sm p-4">
+      <div className="bg-white/95 rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+        {/* En-tête */}
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-white/90 rounded-t-lg">
+          <h2 className="text-lg font-semibold text-gray-800">
+            Gestion de la paie — {employee.matricule} ({employee.name})
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+          >
+            &times;
+          </button>
+        </div>
 
-        <TabGroup>
-          <TabList className="flex space-x-4 border-b pb-2">
-            <button className="px-4 py-1 text-sm font-medium border rounded bg-gray-50 hover:bg-gray-100">
-              Évaluation
-            </button>
-            <button className="px-4 py-1 text-sm font-medium border rounded bg-gray-50 hover:bg-gray-100">
-              Génération
-            </button>
-            <button className="px-4 py-1 text-sm font-medium border rounded bg-gray-50 hover:bg-gray-100">
-              Historique
-            </button>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <EvaluationPreview employee={employee} />
-            </TabPanel>
-            <TabPanel>
-              <BulletinForm employee={employee} />
-            </TabPanel>
-            <TabPanel>
-              <BulletinHistory employeId={employee.id} />
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
+        {/* Contenu */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <EmployeePaieModal employee={employee} showTitle={false} />
+        </div>
       </div>
-    </Modal>
+    </div>
   );
 };
 

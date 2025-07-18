@@ -8,6 +8,10 @@ export const elementSalaireColumns: Column<ElementSalaire>[] = [
     isSelection: true, // ✅ indique que c’est une colonne pour la case à cocher
   },
   {
+    key: "id", // ou "id" ou "libelle" → ce champ doit exister dans ElementSalaire
+    header: "ID",
+  },
+  {
     key: 'libelle',
     header: 'Libellé',
     render: (item) => item.libelle

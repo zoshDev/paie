@@ -2,13 +2,13 @@ import { api } from './api/config';
 import { toast } from 'react-hot-toast';
 import type { Societe } from '@/pages/company/types';
 import type { CompanyFormData } from '@/schemas/companyZodSchema';
-import { safePost, safeUpdate, safeDelete  } from '@/utils/safeRequest';
+import { safePost, safeUpdate, safeDelete, safeGet  } from '@/utils/safeRequest';
 
 export const companyService = {
   // companyService.ts
 async list() {
   try {
-    const response = await api.get('/societe');
+    const response = await api.get('societe/get_all_societe');
     console.log('[📦 Axios Success]', response);
     return Array.isArray(response.data) ? response.data : [];
   } catch (error: any) {
@@ -76,6 +76,8 @@ async list() {
       throw error;
     }
   },*/
+
+   get: (id: string) => safeGet<Societe>(`/societe/${id}`),
 
   async bulkDelete(ids: string[]) {
     try {

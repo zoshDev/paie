@@ -3,6 +3,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { employeeZodSchema } from '@/schemas/employee/employee.zod';
 import type { EmployeeFormData } from '@/schemas/employee/employee.zod';
 
+import { useQuery } from "@tanstack/react-query";
+import { profilPaieService } from "@/pages/roleProfilPaie/profilPaieService";
+
+const { data: roles = [] } = useQuery({
+  queryKey: ["role-profils"],
+  queryFn: profilPaieService.list,
+});
+
 export const useEmployeeForm = (onSubmit: (data: EmployeeFormData) => void) => {
   const form = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeZodSchema),

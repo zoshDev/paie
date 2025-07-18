@@ -2,14 +2,14 @@ import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/layout/layout/Layout';
 import EmployeePayrollProfilePage from '../pages/employee/EmployeePayrollProfilePage';
 import EmployeesListPage from '../pages/employee/EmployeesListPage';
-import ProfilPaieListPage from '../pages/profilPaie/ProfilPaieListPage';
-import RubricsListPage from '../pages/rubric/RubricListPage';
+//import ProfilPaieListPage from '../pages/profilPaie/ProfilPaieListPage';
+//import RubricsListPage from '../pages/rubric/RubricListPage';
 
 import SettingsPage from '../pages/settings/setingsPage';
 import DashboardPages from '../pages/dashboard/dashboardPage';
 import LoginPage from '../pages/auth/LoginPage';
 import PrivateRoute from '../components/auth/PrivateRoute';
-import TestRubricForm from '../pages/TestRubricForm';
+//import TestRubricForm from '../pages/TestRubricForm';
 
 import CompaniesListPage from '@/pages/company/CompaniesListPage';
 import EchelonListPage from '@/pages/echelon/EchelonListPage';
@@ -17,6 +17,7 @@ import CategorieListPage from '@/pages/categoriess/CategorieListPage';
 import CategorieEchelonGrid from '@/pages/categorieEchelon/CategorieEchelonGrid'; //import CategorieEchelonGrid from '@/pages/bareme/CategorieEchelonGrid';
 import ElementSalaireListPage from '@/pages/elementSalaire/ElementSalaireListPage';
 import RoleProfilPaieListPage from '@/pages/roleProfilPaie/RoleProfilPaieListPage';
+import VariableListPage from '@/pages/variable/VariableListPage';
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -46,18 +47,15 @@ const router = createBrowserRouter([
               }
             ]
           },
-          {
+          /*{
             path: 'rubrics/',
             element: <RubricsListPage />,
-          },
-          {
+          },*/
+          /*{
             path: 'test-rubric-form',
             element: <TestRubricForm />,
-          },
-          {
-            path: '/profil-paie',
-            element: <ProfilPaieListPage />,
-          },
+          },*/
+          
           {
             path: 'profilpaie',
             element: <RoleProfilPaieListPage />,
@@ -71,8 +69,17 @@ const router = createBrowserRouter([
             element: <CompaniesListPage />,
           },
           {
-            path: 'elements-salaire',
-            element: <ElementSalaireListPage />,
+            path: 'rubriques',
+            children: [ 
+              {
+                path: '/rubriques/variables',
+                element: <VariableListPage />,
+              },
+              {
+                path: '/rubriques/elements-salaire',
+                element: <ElementSalaireListPage />
+              },
+            ]
           },
           {
             path: 'bareme',
