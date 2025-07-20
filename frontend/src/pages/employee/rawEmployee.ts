@@ -5,6 +5,8 @@ export interface Contrat {
   salaireBase: number;
 }
 
+
+
 export interface RawEmployee {
   id: number;
   userId: number;
@@ -19,6 +21,7 @@ export interface RawEmployee {
   estLoge: boolean;
   societeId: number;
   categorieEchelonId: number;
+  roleId: number[];
   contrat?: Contrat; // Optional field for contract details
 
 }

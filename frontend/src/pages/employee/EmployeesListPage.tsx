@@ -16,6 +16,8 @@ import toast from 'react-hot-toast';
 import type { RawEmployee } from '@/pages/employee/rawEmployee';
 
 import PayrollModal from '@/components/payroll/PayrollModal';
+import { BulkLinkerPanel } from '@/utils/BulkLinkerPanel';
+import AssignmentModal from '../roleProfilPaie/AssignmentModal';
 
 import {
   PlusIcon,
@@ -31,7 +33,7 @@ import {
 
 //import type { Employee } from './types';
 import type { FormField } from '../../components/form/types';
-import useCategorieEchelons from '../categorieEchelon/useCategorieEchelons';
+//import useCategorieEchelons from '../categorieEchelon/useCategorieEchelons';
 import  {contractService } from './contract/contractService';
 import { contractFormSections } from './contract/contractFormSections';
 import { toEntity } from '@/utils/transformers';
@@ -63,6 +65,7 @@ const EmployeesListPage: React.FC = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<RawEmployee | null>(null);
   const [modalMode, setModalMode] = useState<'view' | 'edit' | 'delete' | 'create' | 'bulk-delete' | "paie-actions" | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
+  const [isAssignmentOpen, setAssignmentOpen] = useState(false);
 
 
   const openModal = (employee: RawEmployee | null, mode: typeof modalMode) => {
@@ -120,11 +123,12 @@ const EmployeesListPage: React.FC = () => {
   //Appels aux API externes
   //const { categorieEchelons } = useCategorieEchelons();
   //const { companies } = useCompanies();
-  const {associations} = useCategorieEchelons();
 
   //GESTION ETAT MODAL CONTRAT
   const [selectedContractEmployee, setSelectedContractEmployee] = useState<RawEmployee | null>(null);
   const [contractMode, setContractMode] = useState<"create" | "view" | null>(null);
+
+  const [isBulkLinkerOpen, setBulkLinkerOpen] = useState(false);
 
   const openContractModal = (emp: RawEmployee) => {
     setSelectedContractEmployee(emp);
@@ -140,7 +144,10 @@ const EmployeesListPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <PageHeader title="Liste des Employés" description="Gérer les employés de l'entreprise">
+      <PageHeader 
+        title="Liste des Employés" 
+        description="Gérer les employés de l'entreprise"
+      >
         <div className="flex items-center space-x-4">
           <Input
             type="text"
@@ -168,6 +175,12 @@ const EmployeesListPage: React.FC = () => {
           </div>
         </div>
       </PageHeader>
+
+      {/* 🔗 Lien pour lier des profils de paie ou des éléments de salaire */}
+      
+      {selectedEmployee !== null && (
+        <BulkLinkerPanel sourceId={selectedEmployee.id} />
+      )}
 
       {selectedIds.length >= 2 && (
         <div className="flex justify-end mb-2">
@@ -204,6 +217,22 @@ const EmployeesListPage: React.FC = () => {
             icon: <ClipboardDocumentListIcon  className="w-5 h-5 text-yellow-500" />,
             onClick: () => openPayrollModal(employee),
           },
+          {
+            label: "Lier rôles / éléments",
+            icon: <DocumentTextIcon className="w-5 h-5 text-purple-600" />,
+            onClick: () => {
+              setSelectedEmployee(employee);
+              setBulkLinkerOpen(true);
+            }
+          },
+          {
+            label: "Assignations",
+            icon: <ClipboardDocumentListIcon className="w-5 h-5 text-indigo-600" />,
+            onClick: () => {
+              setSelectedEmployee(employee);
+              setAssignmentOpen(true);
+            }
+          }
         ]}
       />
 
@@ -237,7 +266,7 @@ const EmployeesListPage: React.FC = () => {
                 const contrats = await contractService.getByEmployeId(emp!.id);
                 const contrat = contrats[0]; // On suppose qu'il n'y a qu'un contrat par employé
                 toast.success("Contrat enregistré ✅");
-                setSelectedContractEmployee({ ...emp, contrat });
+                setSelectedContractEmployee({ ...emp!, contrat });
                 setContractMode("view");
               } catch (error) {
                 toast.error("Erreur lors de l’enregistrement ❌");
@@ -257,19 +286,45 @@ const EmployeesListPage: React.FC = () => {
         )}
       />
     )}
-
     {selectedEmployee && (
       <PayrollModal
-        open={isPayrollModalOpen}
+        isOpen={isPayrollModalOpen}
         onClose={() => setPayrollModalOpen(false)}
         employee={selectedEmployee}
+      />
+    )}
+
+    {isBulkLinkerOpen && selectedEmployee && (
+      <EntityModals
+        mode="view"
+        //entity={selectedEmployee}
+        entity={selectedEmployee ? toEntity(selectedEmployee) : null}
+        selectedIds={[]}
+        onClose={() => {
+          setSelectedEmployee(null);
+          setBulkLinkerOpen(false);
+        }}
+        renderView={() => (
+          <BulkLinkerPanel sourceId={selectedEmployee.id} />
+        )}
+      />
+    )}
+
+    {isAssignmentOpen && selectedEmployee && (
+  <AssignmentModal
+        employee={selectedEmployee}
+        onClose={() => {
+          setSelectedEmployee(null);
+          setAssignmentOpen(false);
+        }}
       />
     )}
 
       <EntityModals
         selectedIds={selectedIds.map((id) => String(id))}//{selectedIds}
         mode={modalMode}
-        entity={selectedEmployee}
+        //entity={selectedEmployee}
+        entity={selectedEmployee ? toEntity(selectedEmployee) : null}
         //={employeeFields}
         onClose={closeModal}
         onDeleteConfirm={(id) => {
@@ -312,9 +367,9 @@ const EmployeesListPage: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-1 text-sm">
-              <p><strong>Nom :</strong> {emp?.Nom}</p>
-              <p><strong>Poste :</strong> {emp?.Poste}</p>
-              <p><strong>Catégorie :</strong> {emp?.Categorie}</p>
+              <p><strong>Nom :</strong> {emp?.name}</p>
+              <p><strong>Poste :</strong> {emp?.societeId}</p>
+              <p><strong>Catégorie :</strong> {emp?.categorieEchelonId}</p>
             </div>
           )
         }

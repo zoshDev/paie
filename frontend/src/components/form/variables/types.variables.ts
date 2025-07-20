@@ -1,6 +1,6 @@
 // src/types/types.ts
 
-import React from 'react'; // Importez React pour React.ReactNode si vous l'utilisez dans FormField
+import React from 'react'; // Importez React pour React.ReactNode
 
 export type FieldType =
   | 'text'

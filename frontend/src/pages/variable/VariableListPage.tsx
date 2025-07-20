@@ -77,7 +77,7 @@ const VariableListPage: React.FC = () => {
             placeholder="Rechercher une variable..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:flex-1"
+            className="flex-1"
           />
           <div className="relative">
             <Button onClick={() => setIsActionsOpen(!isActionsOpen)}>

@@ -1,7 +1,7 @@
-import type { ElementSalaire } from "../elementSalaire/elementSalaire";
+//import type { ElementSalaire } from "../elementSalaire/elementSalaire";
 
 export interface ProfilPaie {
   id: string;
-  nom: string;
-  elements: ElementSalaire[];
+  roleName: string;
+  //elements: ElementSalaire[];
 }

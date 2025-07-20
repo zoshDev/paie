@@ -5,12 +5,12 @@ export const profilPaieFormSections: FormSection[] = [
     title: 'Informations Profil',
     fields: [
       {
-        name: 'nom',
+        name: 'roleName',
         label: 'Nom du profil',
         type: 'text',
         required: true,
       },
-      {
+      /*{
         name: 'elementSalaireIds',
         label: 'Éléments de salaire',
         type: 'multiselect',
@@ -20,8 +20,8 @@ export const profilPaieFormSections: FormSection[] = [
           { label: 'CNPS', value: 'cnps' },
           { label: 'IRPP', value: 'irpp' },
         ],
-        required: true,
-      },
+        required: false,
+      },*/
     ],
   },
 ];

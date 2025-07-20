@@ -1,51 +1,144 @@
+// src/schemas/genericZodForm.schema.ts
 import { z } from 'zod';
-//import { FormSection } from './types';
-import type { FormSection } from '@/components/form/types';
+import type { FormField, FormSection } from '@/types/forms';
 
+export const buildZodSchema = (sectionsOrFields: FormSection[] | FormField[]) => {
+  const schemaFields: { [key: string]: z.ZodTypeAny } = {};
 
-export  function buildZodSchema(sections: FormSection[]) {
-  const shape: Record<string, z.ZodTypeAny> = {};
+  let fieldsToProcess: FormField[] = [];
 
-  const fields = sections.flatMap((s) => s.fields);
+  if (sectionsOrFields.length > 0 && 'fields' in sectionsOrFields[0]) {
+    fieldsToProcess = (sectionsOrFields as FormSection[]).flatMap(section => section.fields);
+  } else {
+    fieldsToProcess = sectionsOrFields as FormField[];
+  }
 
-  fields.forEach((field) => {
-    if (field.validation) {
-      shape[field.name] = field.validation;
-      return;
-    }
-
-    let schema: z.ZodTypeAny;
+  fieldsToProcess.forEach((field) => {
+    let fieldSchema: z.ZodTypeAny;
 
     switch (field.type) {
-      case 'number':
-        schema = z.coerce.number();
-        if (field.min !== undefined) schema = schema.min(field.min);
-        if (field.max !== undefined) schema = schema.max(field.max);
-        break;
-
+      case 'text':
+      case 'textarea':
       case 'email':
-        schema = z.string().email();
+      case 'password':
+      case 'select':
+      case 'expressionEditor':
+        // Pour les types chaîne, appliquez .min() directement après z.string()
+        fieldSchema = z.string();
+        if (field.required) {
+          fieldSchema = fieldSchema.min(1, `${field.label} est requis.`);
+        } else {
+          fieldSchema = fieldSchema.optional();
+        }
         break;
-
-      case 'date':
-        schema = z.string(); // ou `z.coerce.date()` si tu veux transformer auto
+      case 'number':
+        // Gérer l'entrée numérique: d'abord une chaîne, puis transformer en nombre ou null
+        fieldSchema = z.string()
+          .nullable() // Permet à la chaîne d'être null
+          .transform(s => {
+            if (s === null || s.trim() === "") {
+              return null; // Transforme chaîne vide ou null en null
+            }
+            const num = Number(s);
+            return isNaN(num) ? null : num; // Transforme en nombre ou null si non numérique
+          })
+          .refine(val => val === null || typeof val === 'number', {
+            message: `${field.label} doit être un nombre valide.`
+          });
+        
+        // Appliquer les validations requises pour les types numériques
+        if (field.required) {
+          fieldSchema = (fieldSchema as z.ZodEffects<z.ZodNullable<z.ZodNumber>, number | null>)
+            .refine(val => val !== null, { message: `${field.label} est requis.` });
+        } else {
+          fieldSchema = (fieldSchema as z.ZodEffects<z.ZodNullable<z.ZodNumber>, number | null>).optional();
+        }
         break;
-
       case 'checkbox':
-        schema = z.boolean();
+        fieldSchema = z.boolean();
+        if (!field.required) {
+          fieldSchema = fieldSchema.optional();
+        }
         break;
-
+      case 'date':
+        fieldSchema = z.string();
+        if (field.required) {
+          fieldSchema = fieldSchema.min(1, `${field.label} est requis.`);
+        } else {
+          fieldSchema = fieldSchema.optional();
+        }
+        break;
       case 'multiselect':
-        schema = z.array(z.string());
+        fieldSchema = z.array(z.string());
+        if (field.required) {
+          fieldSchema = fieldSchema.min(1, `Sélectionnez au moins un élément pour ${field.label}.`);
+        } else {
+          fieldSchema = fieldSchema.optional();
+        }
         break;
+      case 'hidden':
+        fieldSchema = z.any().optional();
+        break;
+      case 'rubriqueSelector':
+        fieldSchema = z.any();
+        if (!field.required) {
+            fieldSchema = fieldSchema.optional();
+        }
+        break;
+      case 'intervalEditor':
+        // Fonction utilitaire pour transformer les champs numériques dans les tranches
+        const numericTransform = z.string()
+          .nullable()
+          .transform(s => {
+            if (s === null || s.trim() === "") {
+              return null;
+            }
+            const num = Number(s);
+            return isNaN(num) ? null : num;
+          })
+          .refine(val => val === null || typeof val === 'number', {
+            message: "Doit être un nombre valide."
+          });
 
+        fieldSchema = z.object({
+          base: z.union([
+            numericTransform, // Pour les bases numériques
+            z.string().optional() // Pour les bases textuelles (noms de variables)
+          ]).nullable(),
+          tranches: z.array(z.object({
+            min: numericTransform,
+            max: numericTransform,
+            valeur: numericTransform,
+          })),
+        });
+        if (!field.required) {
+            fieldSchema = fieldSchema.optional();
+        }
+        break;
+      case 'testResultConfig':
+        fieldSchema = z.object({
+          True: z.string(),
+          False: z.string(),
+        });
+        if (!field.required) {
+            fieldSchema = fieldSchema.optional();
+        }
+        break;
       default:
-        schema = z.string();
+        fieldSchema = z.any().optional();
+        break;
     }
 
-    if (field.required) schema = schema.min(1, `${field.label} est requis`);
-    shape[field.name] = schema;
+    if (field.validation && typeof field.validation === 'function') {
+      try {
+        fieldSchema = field.validation(fieldSchema);
+      } catch (e) {
+        console.error(`Erreur d'application de la validation personnalisée pour le champ ${field.name}:`, e);
+      }
+    }
+    
+    schemaFields[field.name] = fieldSchema;
   });
 
-  return z.object(shape);
-}
+  return z.object(schemaFields);
+};

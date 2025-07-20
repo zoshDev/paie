@@ -12,6 +12,7 @@ async function chargerSocietes() {
   }));
 }
 await chargerSocietes();
+
 export const variableFormSections: FormSection[] = [
   {
     title: "Informations Générales",
@@ -24,7 +25,10 @@ export const variableFormSections: FormSection[] = [
         label: "Type de Variable",
         type: "select",
         options: [
-          "Test", "Calcul", "Intervalle", "Valeur"
+          {value:"Test", label:"Test"},
+          {value:"Calcul", label: "Calcul"}, 
+          {value:"Intervalle", label: "Intervalle"},
+          {value:"Valeur", label: "Valeur"}
         ],
         required: true,
       },
@@ -39,7 +43,6 @@ export const variableFormSections: FormSection[] = [
       },
       { name: "condition", label: "Condition", type: "textarea" },
       { name: "intervalle", label: "Intervalle", type: "textarea" },
-      //{ name: "id", label: "ID Technique", type: "number" },
     ],
   },
 ];
