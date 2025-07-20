@@ -18,6 +18,8 @@ import type { RawEmployee } from '@/pages/employee/rawEmployee';
 import PayrollModal from '@/components/payroll/PayrollModal';
 import { BulkLinkerPanel } from '@/utils/BulkLinkerPanel';
 import AssignmentModal from '../roleProfilPaie/AssignmentModal';
+import { chargerOptionsEmploye, getEmployeeFormSections } from "@/schemas/employee/employee.schema";
+
 
 import {
   PlusIcon,
@@ -66,6 +68,10 @@ const EmployeesListPage: React.FC = () => {
   const [modalMode, setModalMode] = useState<'view' | 'edit' | 'delete' | 'create' | 'bulk-delete' | "paie-actions" | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [isAssignmentOpen, setAssignmentOpen] = useState(false);
+
+  //const [formSections, setFormSections] = useState<FormSection[]>([]);
+  //const [isLoadingForm, setIsLoadingForm] = useState(true);
+
 
 
   const openModal = (employee: RawEmployee | null, mode: typeof modalMode) => {

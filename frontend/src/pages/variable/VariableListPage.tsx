@@ -6,13 +6,14 @@ import DataTable from "@/components/table/DataTable";
 import Menu, { MenuItem } from "@/components/ui/Menu/Menu";
 import BulkActionsBar from "@/components/ui/BulkActionsBar";
 import EntityModals from "@/components/ui/Modal/EntityModal";
-import GenericForm from "@/components/form/GenericForm";
+import { toast } from "react-hot-toast";
 
 import { variableColumns } from "./variable.columns";
-import { variableFormSections } from "./variableFormSections";
+//import { variableFormSections } from "./variableFormSections";
 import { variableService } from "./variableService";
 import useVariables from "./useVariables";
 import parseJsonSafely from "@/utils/parseJsonSafety";
+import VariableForm from "./VariableForm";
 
 import {
   PlusIcon,
@@ -22,6 +23,8 @@ import {
 } from "@heroicons/react/24/outline";
 
 import type { Variable } from "./variableService";
+import GenericForm from "@/components/form/GenericForm";
+import { variableFormSections } from "./variableFormSections";
 
 const VariableListPage: React.FC = () => {
   const {
@@ -35,11 +38,97 @@ const VariableListPage: React.FC = () => {
     isAllSelected,
   } = useVariables();
 
-  const variablesWithId = variables.map((v) => ({ ...v, id: String(v.id) }));
+  const variablesWithId = variables//variables.map((v) => ({ ...v, id: String(v.id) }));
 
   const [selectedVariable, setSelectedVariable] = useState<Variable | null>(null);
   const [modalMode, setModalMode] = useState<"view" | "edit" | "delete" | "create" | "bulk-delete" | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
+
+  //const [isModalOpen, setIsModalOpen] = useState(false);
+  /*const handleCreateVariable = () => {
+    setSelectedVariable(null); // création vierge
+    //setIsModalOpen(true);
+  };
+
+  const handleEditVariable = (variable: any) => {
+    setSelectedVariable(variable); // édition
+    //setIsModalOpen(true);
+  };*/
+
+  //Nettoyage de la payload Variable
+  function buildVariablePayloadd(values: any): any {
+  const payload = { ...values };
+
+  // 🔁 Parsing JSON si le champ vient d’un formulaire textuel
+  const parsedCondition = parseJsonSafely(values.condition);
+  const parsedIntervalle = parseJsonSafely(values.intervalle);
+
+  // 🔎 Type: TEST → injecte condition structurée
+  if (values.typeVariable === "Test") {
+    payload.condition = {
+      expression: parsedCondition?.expression ?? "",
+      valeur: values.valeurTestConfig ?? { True: "", False: "" },
+    };
+  }
+
+  // 🔎 Type: INTERVALLE → structure intacte
+  if (values.typeVariable === "Intervalle") {
+    payload.intervalle = parsedIntervalle;
+  }
+
+  return payload;
+}
+
+function buildVariablePayload(values: any): any {
+  const payload: any = { ...values };
+
+  // 🔎 TypeVariable — transformation ciblée
+  switch (values.typeVariable) {
+    case "Test": {
+      const conditionRaw = parseJsonSafely(values.condition);
+      const testValues = values.valeurTestConfig ?? { True: "", False: "" };
+
+      payload.condition = {
+        expression: conditionRaw?.expression ?? "",
+        valeur: {
+          True: testValues.True,
+          False: testValues.False,
+        },
+      };
+
+      // Optionnel : injecter aussi 'formule' si ton moteur en a besoin
+      // payload.formule = `SI ${conditionRaw?.expression} ALORS ${testValues.True} SINON ${testValues.False}`;
+      break;
+    }
+
+    case "Intervalle": {
+      const intervalleRaw = parseJsonSafely(values.intervalle);
+
+      payload.intervalle = {
+        base: intervalleRaw?.base ?? "",
+        tranches: Array.isArray(intervalleRaw?.tranches)
+          ? intervalleRaw.tranches
+          : [],
+      };
+
+      break;
+    }
+
+    // Les autres types comme Calcul, Valeur peuvent rester inchangés
+  }
+
+  return payload;
+}
+
+
+
+  const availableVariables =  [
+  { code: "1000", libelle: "Taux IR" },
+  { code: "3000", libelle: "Salaire brut" },
+  { code: "2000", libelle: "Prime taxi" },
+];
+
+
 
   const openModal = (variable: Variable | null, mode: typeof modalMode) => {
     setSelectedVariable(variable);
@@ -101,6 +190,8 @@ const VariableListPage: React.FC = () => {
         />
       )}
 
+      
+
       <DataTable
         data={variablesWithId}
         columns={variableColumns}
@@ -132,28 +223,27 @@ const VariableListPage: React.FC = () => {
             initialData={variable ?? {}}
             onSubmit={async (values) => {
               try {
-                const payload = {
-                    ...values,
-                    condition: parseJsonSafely(values.condition),
-                    intervalle:parseJsonSafely(values.intervalle),
-                }
+                const payload = buildVariablePayload(values)
                 if (modalMode === "create") {
                   await variableService.create(payload);
-                  alert("Variable créée ✅");
+                  toast.success("✅ Variable créée !");
                 } else if (variable) {
                   await variableService.update(Number(variable.id), payload);
-                  alert("Variable mise à jour ✨");
+                  toast.success("✨ Variable mise à jour !");
                 }
                 closeModal();
               } catch (err) {
-                alert("Erreur ❌");
+                toast.error("❌ Erreur lors de la soumission");
                 console.error(err);
               }
             }}
-            backgroundIllustration={<CircleStackIcon className="w-40 h-40 text-gray-100" />}
+            modalTitle={modalMode === "create" ? "Créer une variable" : "Modifier la variable"}
+            backgroundIllustration={<CircleStackIcon className="w-40 h-40 text-indigo-100" />}
             submitLabel={modalMode === "create" ? "Créer" : "Mettre à jour"}
+            onCancel={closeModal}
           />
         )}
+
         renderView={(v) =>
           modalMode === "bulk-delete" ? (
             <div>

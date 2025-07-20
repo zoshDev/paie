@@ -1,14 +1,12 @@
 import axios from 'axios';
 import type { ElementSalaire } from './elementSalaire';
+import { safeGet } from '@/utils/safeGet';
 
 const BASE_URL = '/elements-salaire';
 
 export const elementSalaireService = {
   // 📥 Lire tous les éléments
-  getAll: async (): Promise<ElementSalaire[]> => {
-    const response = await axios.get(BASE_URL);
-    return response.data;
-  },
+  getAll: () => safeGet<ElementSalaire>("/element_salaire/get_all_element_salaire") ,//async (): Promise<ElementSalaire[]> => {
 
   // ➕ Créer un nouvel élément
   create: async (data: ElementSalaire): Promise<void> => {

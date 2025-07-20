@@ -14,9 +14,15 @@ export type FieldType =
   | 'date'
   | 'hidden'
   | 'rubriqueSelector'
-  | 'expressionEditor' // <-- Nouveau type pour l'éditeur d'expressions
-  | 'intervalEditor'   // <-- Nouveau type pour l'éditeur d'intervalles
-  | 'testResultConfig'; // <-- Nouveau type pour la configuration Vrai/Faux du test
+  | 'fixed'
+  | 'formula'
+  | 'test'
+  | 'interval'
+  | 'expressionEditor'
+  | "testResultConfig"
+  | "intervalEditor"
+  
+
 
 export interface SelectOption {
   value: string | number;
@@ -39,6 +45,7 @@ export interface FormField {
   disabled?: boolean;
   hidden?: boolean;
   fullWidth?: boolean;
+  props?: Record<string, any>;
   validation?: any; // Pour les règles de validation spécifiques (Zod, etc.)
   dependsOn?: string; // Pour les dépendances de champs
   icon?: React.ReactNode;
@@ -64,7 +71,7 @@ export interface Tranche {
 }
 
 export interface IntervalValue {
-  base: number;
+  base: number| string;
   tranches: Tranche[];
 }
 

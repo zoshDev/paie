@@ -64,7 +64,7 @@ export interface Tranche {
 }
 
 export interface IntervalValue {
-  base: number;
+  base: number | string;
   tranches: Tranche[];
 }
 

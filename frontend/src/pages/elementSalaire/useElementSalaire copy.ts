@@ -1,24 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { elementSalaireService } from "./elementSalaireService";
-import type { ElementSalaire } from "./elementSalaire";
-import { useMemo, useState } from "react";
+import { useState } from 'react';
+import type { ElementSalaire } from './elementSalaire';
+
+// 🧪 À remplacer plus tard par React Query ou appel réel
+const FAKE_ELEMENTS: ElementSalaire[] = [
+ 
+];
 
 const useElementsSalaire = () => {
-  // ✅ Chargement des données via React Query
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["elementsSalaire"],
-    queryFn: elementSalaireService.getAll,
-  });
+  // 📦 Liste complète simulée
+  const [elements, setElements] = useState<ElementSalaire[]>(FAKE_ELEMENTS);
 
-  // 🔍 Recherche locale
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const filteredElements = useMemo(() => {
-    const list = Array.isArray(data) ? data : [];
-    return list.filter((el) =>
-      el.libelle.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [data, searchTerm]);
+  // 🔍 Recherche
+  const [searchTerm, setSearchTerm] = useState('');
+  const filteredElements = elements.filter((el) =>
+    el.libelle.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // ✅ Sélection multiple
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -42,8 +38,6 @@ const useElementsSalaire = () => {
 
   return {
     elements: filteredElements,
-    isLoading,
-    isError,
     searchTerm,
     setSearchTerm,
     selectedIds,
@@ -51,7 +45,6 @@ const useElementsSalaire = () => {
     toggleAllSelected,
     clearSelection,
     isAllSelected,
-    refetch, // 🔄 pour rafraîchir manuellement si besoin
   };
 };
 

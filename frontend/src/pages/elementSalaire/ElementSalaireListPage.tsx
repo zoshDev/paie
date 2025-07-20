@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // 📦 Composants génériques
 import PageHeader from "@/components/layout/PageHeader";
@@ -15,6 +15,10 @@ import { elementSalaireColumns } from "./elementSalaire.columns";
 import { elementSalaireFormSections } from "./elementSalaireFormSections";
 import { elementSalaireService } from "./elementSalaireService";
 import useElementsSalaire from "./useElementSalaire";
+
+import type{ Variable } from "../variable/variableService";
+import { companyService } from "@/services/companyService";
+import { variableService } from "../variable/variableService";
 
 // ✅ Icônes
 import {
@@ -46,6 +50,50 @@ const ElementSalaireListPage: React.FC = () => {
   ...el,
   id: String(el.id), // ✅ compatibilité avec DataTable
 }));
+
+
+
+
+
+//FONCTION APPEL SERVICE
+function chargerOptionsMétier(): Promise<{
+  societeOptions: { label: string; value: number }[];
+  variableOptions: { label: string; value: number }[];
+}> {
+  return Promise.all([
+    companyService.list(),
+    variableService.getAll()
+  ]).then(([societes, variables]) => ({
+    societeOptions: societes.map((s) => ({ label: s.nom, value: s.id })),
+    variableOptions: (variables as Variable[]).map((v) => ({ label: v.nom, value: v.id })),
+  }));
+}
+//STOCKAGE DANS UN HOOK
+const [formOptions, setFormOptions] = useState<{
+  societeOptions: { label: string; value: number }[];
+  variableOptions: { label: string; value: number }[];
+}>({ societeOptions: [], variableOptions: [] });
+
+useEffect(() => {
+  chargerOptionsMétier().then(setFormOptions);
+}, []);
+
+const sectionAvecOptions = elementSalaireFormSections.map((section) => ({
+  ...section,
+  fields: section.fields.map((field) => {
+    if (field.name === "societeId") {
+      return { ...field, options: formOptions.societeOptions };
+    }
+    if (field.name === "variableId") {
+      return { ...field, options: formOptions.variableOptions };
+    }
+    return field;
+  })
+}));
+
+
+
+
 
   
   // 🧠 Modale active (create, edit, delete, view…)
@@ -145,7 +193,7 @@ const ElementSalaireListPage: React.FC = () => {
       {/* 📊 Tableau des éléments */}
       
       <DataTable
-        data={elementsWithId}//{elements}
+        data={elements}//{elementsWithId}
         columns={elementSalaireColumns}
         //Ligne cle
         //selectedIds={selectedIds.map((id) => String(id))} // ✅ conversion ici
@@ -180,7 +228,7 @@ const ElementSalaireListPage: React.FC = () => {
         }}
         renderEditForm={(element) => (
           <GenericForm
-            sections={elementSalaireFormSections}
+            sections={sectionAvecOptions}//{elementSalaireFormSections}
             initialData={element ?? {}}
             onSubmit={async (values) => {
               try {

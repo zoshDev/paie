@@ -9,7 +9,10 @@ export type FieldType =
   | 'checkbox'
   | 'date'
   | 'hidden'
-  | 'rubriqueSelector';
+  | 'rubriqueSelector'
+  | 'expressionEditor'
+  | "intervalEditor"
+  | 'testResultConfig'
 
 export interface SelectOption {
   value: string | number;
@@ -35,6 +38,7 @@ export interface FormField {
   validation?: any;
   dependsOn?: string;
   icon?: React.ReactNode;
+  availableVariables?: string[];
   showWhen?: (values: any) => boolean;
   itemFields?: FormField[]
 }
@@ -44,4 +48,19 @@ export interface FormSection {
   description?: string;
   fields: FormField[];
   columns?: 1 | 2 | 3;
+}
+
+
+export interface IntervalValue {
+  base: number | string;
+  tranches: {
+    min: number;
+    max: number;
+    valeur: number;
+  }[];
+}
+
+export interface TestResultValue {
+  True: string;
+  False: string;
 }

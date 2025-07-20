@@ -15,37 +15,42 @@ await chargerSocietes();
 
 export const variableFormSections: FormSection[] = [
   {
-    title: "🔹 Informations générales",
-    columns: 2, // ou 3, ou rien → défaut 1
-    description: "Renseignements de base pour la variable",
+    title: "Informations Générales",
     fields: [
       { name: "nom", label: "Nom", type: "text", required: true },
-      { name: "code", label: "Code", type: "number", required: true },
+      
       { name: "description", label: "Description", type: "textarea" },
-      { name: "societeId", label: "Société", type: "select", options: societeOptions },
-      { 
-        name: "typeVariable", 
-        label: "Type", 
-        type: "select", 
+      { name: "valeur", label: "Valeur", type: "text",  },
+      {
+        name: "typeVariable",
+        label: "Type de Variable",
+        type: "select",
         options: [
           {value:"Test", label:"Test"},
           {value:"Calcul", label: "Calcul"}, 
           {value:"Intervalle", label: "Intervalle"},
           {value:"Valeur", label: "Valeur"}
-        ], 
-        required: true },
-    ],
-  },
+        ],
+        required: true,
+      },
+      { name: "code", label: "Code", type: "number", required: true },
+      { name: "formule", label: "Formule", type: "text" },
+      { 
+        name: "societeId", 
+        label: "Société", 
+        type: "select",
+        required: true,
+        options: societeOptions,
+      },
+      { name: "condition", label: "Condition", type: "textarea" },
+      { name: "intervalle", label: "Intervalle", type: "textarea" },
 
-  {
-    title: "🔹 Paramétrage métier",
-    columns: 1,
-    fields: [
       {
         name: "formule",
-        label: "Formule",
+        label: "Formule de Calcul",
         type: "expressionEditor",
         showWhen: (values) => values.typeVariable === "Calcul",
+        placeholder: "Ex: SALAIRE_BASE + PRIME_ANCIENNETE",
         availableVariables: [
           "SALAIRE_BASE",
           "DATE_EMBAUCHE",
@@ -55,36 +60,19 @@ export const variableFormSections: FormSection[] = [
         ],
       },
       {
-        name: "valeur",
-        label: "Valeur fixe",
-        type: "text",
-        showWhen: (values) => values.typeVariable === "Valeur",
-      },
-      {
-        name: "condition",
-        label: "Condition",
-        type: "expressionEditor",
-        showWhen: (values) => values.typeVariable === "Test",
-        availableVariables: [
-          "SALAIRE_BRUT",
-          "ANCIENNETE",
-          "NB_ENFANTS",
-          "EST_LOGE"
-        ]
-      },
-      {
-        name: "valeurTestConfig",
-        label: "Valeurs si vrai/faux",
-        type: "testResultConfig",
-        showWhen: (values) => values.typeVariable === "Test",
-      },
-      {
         name: "intervalle",
         label: "Tranches",
         type: "intervalEditor",
         showWhen: (values) => values.typeVariable === "Intervalle",
       },
+      {
+        name: "valeurTestConfig",
+        label: "Valeurs du Test",
+        type: "testResultConfig",
+        showWhen: (values) => values.typeVariable === "Test",
+      }
+
+      
     ],
   },
-  
 ];
